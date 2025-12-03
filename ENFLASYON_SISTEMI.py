@@ -368,13 +368,21 @@ def dashboard_modu():
                     kg3.metric("Takip Edilen Ürün", f"{len(df_gida)} Adet")
 
                     st.markdown("#### 🥦 Gıda Ürünlerinde Değişim")
+
+                    # --- HATA DÜZELTME ALANI ---
+                    # Önce veriyi hazırlıyoruz
                     df_gida_show = df_gida[['Madde adı', 'Fark', son]].sort_values('Fark', ascending=False)
+
+                    # KRİTİK DÜZELTME: Kolon adı olan 'son' (Tarih objesi) yerine string kullanıyoruz.
+                    # Kolon adını 'Son_Tutar' olarak değiştiriyoruz ki JSON hatası vermesin.
+                    df_gida_show = df_gida_show.rename(columns={son: "Son_Tutar"})
+
                     st.dataframe(
                         df_gida_show,
                         column_config={
                             "Fark": st.column_config.ProgressColumn("Değişim", format="%.2f%%", min_value=-0.5,
                                                                     max_value=0.5),
-                            son: st.column_config.NumberColumn("Son Fiyat", format="%.2f ₺")
+                            "Son_Tutar": st.column_config.NumberColumn("Son Fiyat", format="%.2f ₺")
                         },
                         hide_index=True, use_container_width=True
                     )
