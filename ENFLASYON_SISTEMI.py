@@ -130,31 +130,24 @@ def install_browsers():
 
 
 # --- 🤖 ÖZEL MİGROS GIDA BOTU 🤖 ---
+# --- 🤖 GÜNCELLENMİŞ MİGROS GIDA BOTU (Terminator Modu) 🤖 ---
 def migros_gida_botu(log_callback=None):
     if log_callback: log_callback("🍏 Migros Gıda Botu Hazırlanıyor...")
     install_browsers()
 
-    # Listeyi Oku
     try:
         df = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
         df['Kod'] = df['Kod'].astype(str).apply(kod_standartlastir)
-
-        # --- FİLTRELEME MANTIĞI ---
-        # 1. Kod '01' ile başlamalı (GIDA)
-        # 2. URL içinde 'migros' geçmeli
         mask = (df['Kod'].str.startswith('01')) & (df['URL'].str.contains('migros', case=False, na=False))
         takip = df[mask].copy()
-
-        if takip.empty:
-            return "⚠️ Listede '01' kodlu MİGROS ürünü bulunamadı!"
-
+        if takip.empty: return "⚠️ Listede '01' kodlu MİGROS ürünü bulunamadı!"
     except Exception as e:
         return f"Excel Hatası: {e}"
 
     veriler = []
     total = len(takip)
 
-    if log_callback: log_callback(f"🚀 {total} GIDA Ürünü Taranacak (Sadece Migros)...")
+    if log_callback: log_callback(f"🚀 {total} GIDA Ürünü Taranacak (Gelişmiş Mod)...")
 
     with sync_playwright() as p:
         browser = p.firefox.launch(headless=True)
@@ -162,13 +155,11 @@ def migros_gida_botu(log_callback=None):
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
         )
         page = context.new_page()
-        # Webdriver gizleme
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
         for i, row in takip.iterrows():
             urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:30]
             url = row['URL']
-
             log_msg = f"🛒 [{i + 1}/{total}] {urun_adi}..."
             if log_callback: log_callback(log_msg)
 
@@ -176,30 +167,60 @@ def migros_gida_botu(log_callback=None):
             kaynak = ""
 
             try:
-                # Migros SPA olduğu için networkidle beklemek iyidir
-                page.goto(url, timeout=40000, wait_until="domcontentloaded")
-                time.sleep(2)  # Garanti olsun diye kısa bekleme
+                page.goto(url, timeout=30000, wait_until="domcontentloaded")
+                time.sleep(2.5)  # Biraz daha fazla bekle, bebek sütü vb. geç yüklenir.
 
-                # --- MİGROS "SECRET WEAPON" (JSON-LD) ---
-                # Görsel yüklenmese bile arka plandaki veriyi okur
+                # YÖNTEM 1: JSON-LD (Metadata)
                 try:
                     json_data = page.locator("script[type='application/ld+json']").first.inner_text()
                     data = json.loads(json_data)
-
                     if "offers" in data and "price" in data["offers"]:
                         fiyat = float(data["offers"]["price"])
-                        kaynak = "Migros (Metadata)"
-                    elif "hasVariant" in data:
+                        kaynak = "Migros (Meta)"
+                    elif "hasVariant" in data:  # Varyantlı ürün (Bebek Sütü buraya düşer)
                         fiyat = float(data["hasVariant"][0]["offers"]["price"])
-                        kaynak = "Migros (Metadata-V)"
+                        kaynak = "Migros (Varyant)"
                 except:
-                    # JSON başarısızsa klasik yöntemi dene
-                    selectors = ["sm-product-price", ".product-price", "fe-product-price .amount", "#price-value"]
+                    pass
+
+                # YÖNTEM 2: CSS Seçiciler (Görsel)
+                if fiyat == 0:
+                    selectors = [
+                        "sm-product-price .amount",
+                        ".product-price",
+                        "fe-product-price .amount",
+                        "#price-value",
+                        ".subtitle-1"  # İndirimli fiyatlar bazen burada olur
+                    ]
                     for sel in selectors:
                         if page.locator(sel).count() > 0:
-                            el = page.locator(sel).first
-                            val = temizle_fiyat(el.inner_text() or el.text_content())
+                            el_text = page.locator(sel).first.inner_text()
+                            val = temizle_fiyat(el_text)
                             if val: fiyat = val; kaynak = "Migros (CSS)"; break
+
+                # YÖNTEM 3: REGEX TARAMA (Kurtarıcı)
+                # Sayfada fiyat bulunamadıysa, HTML'in içindeki metinleri tarar.
+                if fiyat == 0:
+                    try:
+                        # Sayfanın görünen metnini al
+                        body_text = page.locator("body").inner_text()
+                        # Örn: 350,90 TL formatını ara
+                        bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_text)
+
+                        fiyatlar = []
+                        for ham in bulunanlar:
+                            temiz = temizle_fiyat(ham)
+                            if temiz and temiz > 1:  # 1 TL altı hatalı olabilir
+                                fiyatlar.append(temiz)
+
+                        if fiyatlar:
+                            # Genelde sayfadaki en büyük puntolu fiyat doğru fiyattır ama
+                            # biz güvenli olsun diye mantıklı (ortalama) bir değer alalım veya ilki.
+                            # Migros'ta genelde sepete ekle yanındaki fiyat sayfada üsttedir.
+                            fiyat = fiyatlar[0]
+                            kaynak = "Migros (Regex)"
+                    except:
+                        pass
 
             except Exception as e:
                 if log_callback: log_callback(f"{log_msg}\n❌ Hata: {str(e)[:50]}")
@@ -216,14 +237,12 @@ def migros_gida_botu(log_callback=None):
                     "URL": url
                 })
             else:
-                if log_callback: log_callback(f"{log_msg}\n⚠️ Fiyat Bulunamadı")
+                if log_callback: log_callback(f"{log_msg}\n⚠️ Fiyat Bulunamadı (Manuel Kontrol Gerekebilir)")
 
-            # Migros'u kızdırmamak için bekleme
             time.sleep(random.uniform(1.0, 2.0))
 
         browser.close()
 
-    # Verileri Kaydet
     if veriler:
         df_new = pd.DataFrame(veriler)
         try:
