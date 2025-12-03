@@ -21,24 +21,15 @@ st.markdown("""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400&display=swap');
 
-        /* GENEL ATMOSFER */
-        .stApp {
-            background-color: #f8fafc; /* Slate-50 */
-            font-family: 'Inter', sans-serif;
-            color: #1e293b;
-        }
-
-        /* GİZLİ ELEMENTLER */
+        .stApp { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #1e293b; }
         [data-testid="stSidebar"], [data-testid="stToolbar"], .stDeployButton, footer, #MainMenu {display: none !important;}
 
-        /* ✨ HEADER & LIVE INDICATOR */
+        /* HEADER */
         .header-container {
             display: flex; justify-content: space-between; align-items: center;
             padding: 20px 0; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px;
         }
-        .app-title {
-            font-size: 32px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px;
-        }
+        .app-title { font-size: 32px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
         .live-indicator {
             display: flex; align-items: center; font-size: 13px; font-weight: 600; color: #15803d;
             background: #ffffff; padding: 6px 12px; border-radius: 20px; border: 1px solid #bbf7d0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
@@ -53,29 +44,22 @@ st.markdown("""
             100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
-        /* 📈 MODERN TICKER */
+        /* TICKER */
         .ticker-wrap {
-            width: 100%; overflow: hidden; background: #ffffff;
-            border-bottom: 1px solid #cbd5e1;
+            width: 100%; overflow: hidden; background: #ffffff; border-bottom: 1px solid #cbd5e1;
             white-space: nowrap; padding: 10px 0; margin-bottom: 25px;
         }
         .ticker { display: inline-block; animation: ticker 50s linear infinite; }
-        .ticker-item { 
-            display: inline-block; padding: 0 2rem; font-family: 'Inter', sans-serif;
-            font-weight: 600; font-size: 14px; color: #475569;
-        }
+        .ticker-item { display: inline-block; padding: 0 2rem; font-family: 'Inter', sans-serif; font-weight: 600; font-size: 14px; color: #475569; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* 💎 CUSTOM METRIC CARDS */
+        /* KARTLAR */
         .metric-card {
             background: #ffffff; border-radius: 12px; padding: 24px;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid #e2e8f0; transition: all 0.3s ease;
         }
-        .metric-card:hover {
-            transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            border-color: #94a3b8;
-        }
+        .metric-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-color: #94a3b8; }
         .metric-label { font-size: 13px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
         .metric-value { font-size: 28px; font-weight: 800; color: #0f172a; margin: 8px 0; letter-spacing: -0.5px; }
         .metric-delta { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 6px; display: inline-block; }
@@ -83,36 +67,27 @@ st.markdown("""
         .delta-neg { background: #dcfce7; color: #16a34a; } 
         .delta-neu { background: #f1f5f9; color: #475569; }
 
-        /* 🤖 ASİSTAN PRO UI */
-        .bot-bubble {
-            background: #f8fafc; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 0 8px 8px 8px;
-            margin-top: 20px; color: #334155; font-size: 15px; line-height: 1.6;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        /* ANALİZ KUTUSU (TEXT BLOCK) */
+        .analysis-box {
+            background: #ffffff; border-left: 6px solid #3b82f6; padding: 30px; border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); font-size: 16px; line-height: 1.7; color: #334155;
         }
-        .analysis-badge {
-            display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px;
-        }
-        .badge-bad { background: #fee2e2; color: #991b1b; }
-        .badge-good { background: #dcfce7; color: #166534; }
+        .analysis-title { font-size: 20px; font-weight: 800; color: #0f172a; margin-bottom: 15px; display: flex; align-items: center; }
+        .highlight { font-weight: 700; color: #1e293b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+        .trend-up { color: #dc2626; font-weight: 700; }
+        .trend-down { color: #16a34a; font-weight: 700; }
 
-        /* 🚀 ACTION BUTTON */
+        /* ASİSTAN & BUTONLAR */
+        .bot-bubble { background: #f8fafc; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 0 8px 8px 8px; margin-top: 20px; color: #334155; font-size: 15px; line-height: 1.6; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .action-container { margin-top: 40px; text-align: center; }
-        .action-btn button {
-            background: #0f172a !important; color: white !important; height: 60px; font-size: 18px !important; font-weight: 600 !important;
-            border-radius: 8px !important; width: 100%; border: none !important; transition: all 0.2s ease;
-        }
+        .action-btn button { background: #0f172a !important; color: white !important; height: 60px; font-size: 18px !important; font-weight: 600 !important; border-radius: 8px !important; width: 100%; border: none !important; transition: all 0.2s ease; }
         .action-btn button:hover { background: #334155 !important; transform: translateY(-1px); }
 
-        /* TABS */
+        /* TABS & FOOTER */
         .stTabs [data-baseweb="tab-list"] { gap: 20px; border-bottom: 2px solid #e2e8f0; }
         .stTabs [data-baseweb="tab"] { background: transparent; border: none; color: #64748b; font-weight: 600; padding-bottom: 10px; }
         .stTabs [aria-selected="true"] { color: #0f172a; border-bottom: 2px solid #0f172a; }
-
-        /* IMZA */
-        .signature-footer {
-            text-align: center; margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0;
-            color: #94a3b8; font-size: 14px; font-weight: 500; font-family: 'Inter', sans-serif;
-        }
+        .signature-footer { text-align: center; margin-top: 60px; padding-top: 20px; border-top: 1px solid #e2e8f0; color: #94a3b8; font-size: 14px; font-weight: 500; }
     </style>
 """, unsafe_allow_html=True)
 
@@ -148,7 +123,6 @@ def github_excel_guncelle(df_yeni, dosya_adi):
             c = repo.get_contents(dosya_adi, ref=st.secrets["github"]["branch"])
             old = pd.read_excel(BytesIO(c.decoded_content))
             yeni_tarih = df_yeni['Tarih'].iloc[0]
-            # Akıllı Kayıt
             old = old[~((old['Tarih'].astype(str) == str(yeni_tarih)) & (old['Kod'].isin(df_yeni['Kod'])))]
             final = pd.concat([old, df_yeni], ignore_index=True)
         except:
@@ -277,7 +251,7 @@ def dashboard_modu():
             # UI: HEADER
             st.markdown(f"""
                 <div class="header-container">
-                    <div class="app-title">Enflasyon Monitörü <span style="font-weight:300; color:#64748b;">v4.0</span></div>
+                    <div class="app-title">Enflasyon Monitörü <span style="font-weight:300; color:#64748b;">Analist</span></div>
                     <div class="live-indicator"><div class="pulse"></div>SİSTEM AKTİF • {son.strftime('%d.%m.%Y')}</div>
                 </div>
             """, unsafe_allow_html=True)
@@ -312,42 +286,59 @@ def dashboard_modu():
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # 🚀 PRO ŞELALE GRAFİĞİ (WATERFALL)
-            # Katkı Hesabı: (Grup Farkı * Grup Ağırlığı) / Toplam Ağırlık
-            total_weight = df_analiz['Agirlik_2025'].sum()
-            df_analiz['Katki'] = (df_analiz[son] - df_analiz[baz]) * df_analiz['Agirlik_2025']
-            df_katki = df_analiz.groupby('Grup')['Katki'].sum().reset_index()
-            df_katki['Katki_Puan'] = (df_katki['Katki'] / total_weight) * 100
+            # 🔥 YENİ ANALİZ BÖLÜMÜ (ŞELALE YERİNE) 🔥
 
-            # Sırala ve Çiz
-            df_katki = df_katki.sort_values('Katki_Puan', ascending=False)
+            # 1. Analiz Verileri
+            en_cok_artan_grup = df_analiz.groupby('Grup')['Fark'].mean().idxmax()
+            en_cok_artan_grup_oran = df_analiz.groupby('Grup')['Fark'].mean().max() * 100
 
-            fig_water = go.Figure(go.Waterfall(
-                name="Enflasyon Katkısı", orientation="v",
-                measure=["relative"] * len(df_katki),
-                x=df_katki['Grup'],
-                textposition="outside",
-                text=[f"%{x:.2f}" for x in df_katki['Katki_Puan']],
-                y=df_katki['Katki_Puan'],
-                connector={"line": {"color": "rgb(63, 63, 63)"}},
-                decreasing={"marker": {"color": "#16a34a"}},  # Yeşil (Düşüş)
-                increasing={"marker": {"color": "#dc2626"}},  # Kırmızı (Artış)
-                totals={"marker": {"color": "#0f172a"}}
-            ))
-            fig_water.update_layout(
-                title=dict(text="📊 Enflasyon Kaynak Analizi (Sektörel Katkı)", font=dict(size=18, color='#0f172a')),
-                plot_bgcolor='white', paper_bgcolor='white',
-                margin=dict(t=50, b=0, l=0, r=0),
-                yaxis=dict(title="Puan Etkisi", showgrid=True, gridcolor='#f1f5f9'),
-                showlegend=False
-            )
-            st.plotly_chart(fig_water, use_container_width=True)
+            dusukler = df_analiz[df_analiz['Fark'] < 0].sort_values('Fark')
+            dusen_var = not dusukler.empty
+            en_cok_dusen_isim = dusukler.iloc[0]['Madde adı'] if dusen_var else "Yok"
+            en_cok_dusen_oran = abs(dusukler.iloc[0]['Fark'] * 100) if dusen_var else 0
+
+            trend_yonu = "YÜKSELİŞ" if genel_enf > 0 else "DÜŞÜŞ"
+            trend_renk = "trend-up" if genel_enf > 0 else "trend-down"
+
+            # 2. Metin Bloğu (Dinamik)
+            analiz_html = f"""
+            <div class="analysis-box">
+                <div class="analysis-title">📊 Piyasa Analiz Raporu</div>
+                <p>
+                    <b>1. Genel Görünüm:</b> Piyasa genelinde <span class="{trend_renk}">{trend_yonu}</span> eğilimi hakim. 
+                    Genel enflasyon sepeti, baz döneme göre <span class="highlight">%{genel_enf:.2f}</span> oranında değişim gösterdi.<br><br>
+                    <b>2. Sektörel Baskı:</b> En yüksek fiyat artışı ortalama <span class="trend-up">%{en_cok_artan_grup_oran:.2f}</span> ile 
+                    <span class="highlight">{en_cok_artan_grup}</span> kategorisinde hissediliyor. Bu sektör, enflasyonu yukarı çeken ana etkenlerden biri.<br><br>
+                    <b>3. Uç Noktalar:</b> Zammın şampiyonu <span class="trend-up">%{top['Fark'] * 100:.2f}</span> artışla 
+                    <span class="highlight">{top['Madde adı']}</span> oldu. 
+                    {'Buna karşın, <span class="highlight">' + en_cok_dusen_isim + '</span> fiyatındaki <span class="trend-down">%' + f"{en_cok_dusen_oran:.2f}" + '</span> düşüşle dikkat çekti.' if dusen_var else 'Kayda değer bir fiyat düşüşü (indirim) gözlemlenmedi.'}
+                </p>
+            </div>
+            """
+
+            col_text, col_chart = st.columns([2, 3], gap="medium")
+
+            with col_text:
+                st.markdown(analiz_html, unsafe_allow_html=True)
+
+            with col_chart:
+                # Sıcaklık Haritası (Treemap)
+                fig_tree = px.treemap(
+                    df_analiz,
+                    path=[px.Constant("Piyasa Geneli"), 'Grup', 'Madde adı'],
+                    values='Agirlik_2025',
+                    color='Fark',
+                    color_continuous_scale='RdYlGn_r',
+                    title="Enflasyon Sıcaklık Haritası (Kırmızı: Yüksek Artış)"
+                )
+                fig_tree.update_layout(margin=dict(t=30, l=0, r=0, b=0), height=380)
+                st.plotly_chart(fig_tree, use_container_width=True)
 
             # SEKMELER
             tabs = st.tabs(
                 ["🤖 AKILLI ASİSTAN", "🫧 BALONCUKLAR", "🍏 GIDA", "🚀 ZİRVE", "📉 FIRSATLAR", "📑 LİSTE", "🎲 SİMÜLE"])
 
-            with tabs[0]:  # ASİSTAN (PRO)
+            with tabs[0]:  # ASİSTAN
                 st.markdown("##### 🤖 Piyasa Analiz Asistanı")
                 with st.container():
                     sorgu_ham = st.text_input("", placeholder="Ürün veya kategori yazın (Örn: Süt, Yağ)...",
@@ -373,13 +364,13 @@ def dashboard_modu():
                                 durum_text = "ZAMLANDI";
                                 color_style = "#dc2626";
                                 bg_style = "#fef2f2"
-                                msg_extra = f"Genel enflasyon (%{genel_enf:.2f}) ile kıyaslandığında dikkat çekici bir artış."
+                                msg_extra = f"Genel enflasyon (%{genel_enf:.2f}) üzerinde bir artış."
                             elif fark < 0:
                                 durum_icon = "🎉";
                                 durum_text = "İNDİRİMDE";
                                 color_style = "#16a34a";
                                 bg_style = "#f0fdf4"
-                                msg_extra = "Bu ürünün fiyatı düşüş eğiliminde."
+                                msg_extra = "Fiyat düşüşü yakaladınız."
                             else:
                                 durum_icon = "➖";
                                 durum_text = "SABİT";
@@ -431,8 +422,8 @@ def dashboard_modu():
                 st.table(df_analiz.sort_values('Fark', ascending=False).head(10)[['Madde adı', 'Grup', 'Fark']].assign(
                     Fark=lambda x: x['Fark'].apply(lambda v: f"%{v * 100:.2f}")))
 
-            with tabs[4]:  # FIRSAT
-                low = df_analiz[df_analiz['Fark'] < 0].sort_values('Fark')
+            with tabs[4]:  # FIRSAT (İLK 10)
+                low = df_analiz[df_analiz['Fark'] < 0].sort_values('Fark').head(10)  # İLK 10 EKLENDİ
                 if not low.empty:
                     st.table(low[['Madde adı', 'Grup', 'Fark']].assign(
                         Fark=lambda x: x['Fark'].apply(lambda v: f"%{v * 100:.2f}")))
