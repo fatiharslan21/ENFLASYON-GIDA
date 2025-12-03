@@ -263,48 +263,56 @@ def dashboard_modu():
                 ["🤖 ASİSTAN", "🫧 PİYASA BALONCUKLARI", "🍏 GIDA DETAY", "🚀 ZİRVE", "📉 FIRSATLAR", "📑 TAM LİSTE",
                  "🎲 SİMÜLASYON"])
 
-            with t1:  # 🤖 ASİSTAN SORGULAMA (YENİ)
+            with t1:  # 🤖 ASİSTAN (YENİLENMİŞ)
                 st.markdown("##### 🤖 Merhaba, neyi merak ediyorsun?")
-                sorgu = st.text_input("", placeholder="Örn: Süt, Ekmek, Gıda, Alkol...", key="asistan_input")
+                sorgu_ham = st.text_input("", placeholder="Örn: Yatak, Süt, Ekmek, Gıda...", key="asistan_input")
 
-                if sorgu:
-                    # Arama İşlemi
-                    sorgu = sorgu.lower()
+                if sorgu_ham:
+                    sorgu = sorgu_ham.lower()  # BÜYÜK/KÜÇÜK HARF DUYARSIZLIĞI
+
+                    # Ürün Ara
                     sonuc_urun = df_analiz[df_analiz['Madde adı'].str.lower().str.contains(sorgu, na=False)]
+                    # Kategori Ara
                     sonuc_grup = df_analiz[df_analiz['Grup'].str.lower().str.contains(sorgu, na=False)]
 
+                    target_row = None
+
                     if not sonuc_urun.empty:
-                        # Ürün Bulunduysa En İlgiliyi Al
-                        row = sonuc_urun.iloc[0]
-                        fark = row['Fark'] * 100
-
-                        emoji = "📈" if fark > 0 else "🎉" if fark < 0 else "😐"
-                        stil = "bot-bad" if fark > 0 else "bot-good" if fark < 0 else "bot-msg"
-                        yorum = "maalesef zamlandı." if fark > 0 else "indirimde!" if fark < 0 else "fiyatını koruyor."
-
-                        st.markdown(f"""
-                        <div class="{stil}">
-                            <h3>{emoji} {row['Madde adı']} Analizi</h3>
-                            <p>Sistemi taradım. Bu ürün <b>{baz}</b> tarihinde <b>{row[baz]:.2f} TL</b> iken, bugün <b>{row[son]:.2f} TL</b> olmuş.</p>
-                            <p>Genel değişim: <b>%{fark:.2f}</b> oranında {yorum}</p>
-                        </div>
-                        """, unsafe_allow_html=True)
-
-                        # Grafik
-                        kod = row['Kod']
-                        hist = df_f[df_f['Kod'] == kod].sort_values('Tam_Zaman')
-                        fig_l = px.line(hist, x='Tam_Zaman', y='Fiyat', markers=True,
-                                        title=f"{row['Madde adı']} Fiyat Grafiği")
-                        fig_l.update_traces(line_color='#3b82f6', line_width=4)
-                        fig_l.update_layout(plot_bgcolor='white', xaxis_title="", yaxis_title="Fiyat (TL)")
-                        st.plotly_chart(fig_l, use_container_width=True)
-
+                        # ÇOKLU SONUÇ KONTROLÜ
                         if len(sonuc_urun) > 1:
                             st.info(
-                                f"💡 Ayrıca şunları da buldum: {', '.join(sonuc_urun['Madde adı'].tolist()[1:5])}...")
+                                f"🤔 '{sorgu_ham}' ile ilgili {len(sonuc_urun)} farklı ürün buldum. Hangisini incelemek istersin?")
+                            secilen_isim = st.selectbox("Lütfen birini seç:", sonuc_urun['Madde adı'].tolist(),
+                                                        key="disambiguation")
+                            target_row = df_analiz[df_analiz['Madde adı'] == secilen_isim].iloc[0]
+                        else:
+                            target_row = sonuc_urun.iloc[0]
+
+                        # SONUÇ GÖSTERİMİ
+                        if target_row is not None:
+                            row = target_row
+                            fark = row['Fark'] * 100
+                            emoji = "📈" if fark > 0 else "🎉" if fark < 0 else "😐"
+                            stil = "bot-bad" if fark > 0 else "bot-good" if fark < 0 else "bot-msg"
+                            yorum = "maalesef zamlandı." if fark > 0 else "indirimde!" if fark < 0 else "fiyatını koruyor."
+
+                            st.markdown(f"""
+                            <div class="{stil}">
+                                <h3>{emoji} {row['Madde adı']} Analizi</h3>
+                                <p>Sistemi taradım. Bu ürün <b>{baz}</b> tarihinde <b>{row[baz]:.2f} TL</b> iken, bugün <b>{row[son]:.2f} TL</b> olmuş.</p>
+                                <p>Genel değişim: <b>%{fark:.2f}</b> oranında {yorum}</p>
+                            </div>
+                            """, unsafe_allow_html=True)
+
+                            kod = row['Kod']
+                            hist = df_f[df_f['Kod'] == kod].sort_values('Tam_Zaman')
+                            fig_l = px.line(hist, x='Tam_Zaman', y='Fiyat', markers=True,
+                                            title=f"{row['Madde adı']} Fiyat Grafiği")
+                            fig_l.update_traces(line_color='#3b82f6', line_width=4)
+                            fig_l.update_layout(plot_bgcolor='white', xaxis_title="", yaxis_title="Fiyat (TL)")
+                            st.plotly_chart(fig_l, use_container_width=True)
 
                     elif not sonuc_grup.empty:
-                        # Kategori Bulunduysa
                         grp_name = sonuc_grup.iloc[0]['Grup']
                         grp_data = df_analiz[df_analiz['Grup'] == grp_name]
                         grp_enf = ((grp_data[son] / grp_data[baz] * grp_data['Agirlik_2025']).sum() / grp_data[
@@ -317,16 +325,13 @@ def dashboard_modu():
                             <p>Kategoride toplam <b>{len(grp_data)}</b> ürün takip ediliyor.</p>
                         </div>
                         """, unsafe_allow_html=True)
-
                         st.dataframe(grp_data[['Madde adı', 'Fark', son]].sort_values('Fark', ascending=False),
                                      use_container_width=True)
 
                     else:
-                        st.warning(
-                            "😕 Üzgünüm, veri tabanında böyle bir ürün veya kategori bulamadım. Lütfen başka bir kelime dene.")
-
+                        st.warning("😕 Üzgünüm, veri tabanında böyle bir ürün veya kategori bulamadım.")
                 else:
-                    st.info("👆 Yukarıya bir ürün adı yaz, senin için analiz edeyim.")
+                    st.info("👆 Yukarıya bir ürün adı yaz (örn: YATAK), analiz edeyim.")
 
             with t2:  # BUBBLE CHART
                 st.markdown("##### 🫧 Piyasa Fiyat Dağılımı")
