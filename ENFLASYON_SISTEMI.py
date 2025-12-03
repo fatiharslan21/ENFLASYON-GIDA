@@ -131,8 +131,9 @@ def install_browsers():
 
 # --- 🤖 ÖZEL MİGROS GIDA BOTU 🤖 ---
 # --- 🤖 GÜNCELLENMİŞ MİGROS GIDA BOTU (Terminator Modu) 🤖 ---
+# --- 🚀 MİGROS TURBO BOT (GÖRSELSİZ & HIZLI) 🚀 ---
 def migros_gida_botu(log_callback=None):
-    if log_callback: log_callback("🍏 Migros Gıda Botu Hazırlanıyor...")
+    if log_callback: log_callback("⚡ Turbo Mod Devrede: Görseller ve Gereksiz Dosyalar Engelleniyor...")
     install_browsers()
 
     try:
@@ -147,86 +148,81 @@ def migros_gida_botu(log_callback=None):
     veriler = []
     total = len(takip)
 
-    if log_callback: log_callback(f"🚀 {total} GIDA Ürünü Taranacak (Gelişmiş Mod)...")
+    if log_callback: log_callback(f"🏎️ {total} Ürün Hızla Taranıyor...")
 
     with sync_playwright() as p:
         browser = p.firefox.launch(headless=True)
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
         )
+
+        # --- HIZLANDIRMA SİHİRLİ KODU ---
+        # Görselleri, fontları ve medyaları yüklemeyi YASAKLIYORUZ.
         page = context.new_page()
+        page.route("**/*", lambda route: route.abort()
+        if route.request.resource_type in ["image", "media", "font", "stylesheet"]
+        else route.continue_())
+
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
         for i, row in takip.iterrows():
-            urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:30]
+            urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
             url = row['URL']
-            log_msg = f"🛒 [{i + 1}/{total}] {urun_adi}..."
+
+            # Daha az log basıyoruz ki konsol yorulmasın
+            log_msg = f"⚡ [{i + 1}/{total}] {urun_adi}..."
             if log_callback: log_callback(log_msg)
 
             fiyat = 0.0
             kaynak = ""
 
             try:
-                page.goto(url, timeout=30000, wait_until="domcontentloaded")
-                time.sleep(2.5)  # Biraz daha fazla bekle, bebek sütü vb. geç yüklenir.
+                # Networkidle yerine domcontentloaded kullanıyoruz (Daha Hızlı)
+                page.goto(url, timeout=20000, wait_until="domcontentloaded")
 
-                # YÖNTEM 1: JSON-LD (Metadata)
+                # Bekleme süresini 0.5 saniyeye düşürdük (Sadece JS otursun diye)
+                time.sleep(0.5)
+
+                # 1. HIZLI YÖNTEM: JSON-LD (Metadata)
                 try:
                     json_data = page.locator("script[type='application/ld+json']").first.inner_text()
                     data = json.loads(json_data)
                     if "offers" in data and "price" in data["offers"]:
                         fiyat = float(data["offers"]["price"])
-                        kaynak = "Migros (Meta)"
-                    elif "hasVariant" in data:  # Varyantlı ürün (Bebek Sütü buraya düşer)
+                        kaynak = "Meta"
+                    elif "hasVariant" in data:
                         fiyat = float(data["hasVariant"][0]["offers"]["price"])
-                        kaynak = "Migros (Varyant)"
+                        kaynak = "Varyant"
                 except:
                     pass
 
-                # YÖNTEM 2: CSS Seçiciler (Görsel)
-                if fiyat == 0:
-                    selectors = [
-                        "sm-product-price .amount",
-                        ".product-price",
-                        "fe-product-price .amount",
-                        "#price-value",
-                        ".subtitle-1"  # İndirimli fiyatlar bazen burada olur
-                    ]
-                    for sel in selectors:
-                        if page.locator(sel).count() > 0:
-                            el_text = page.locator(sel).first.inner_text()
-                            val = temizle_fiyat(el_text)
-                            if val: fiyat = val; kaynak = "Migros (CSS)"; break
-
-                # YÖNTEM 3: REGEX TARAMA (Kurtarıcı)
-                # Sayfada fiyat bulunamadıysa, HTML'in içindeki metinleri tarar.
+                # 2. YÖNTEM: CSS (Eğer JSON yoksa bakar)
                 if fiyat == 0:
                     try:
-                        # Sayfanın görünen metnini al
+                        # Fiyat etiketini 2 saniye arar, bulursa alır, bulamazsa geçer
+                        el = page.locator("sm-product-price .amount, .product-price, #price-value").first
+                        if el.is_visible(timeout=2000):
+                            val = temizle_fiyat(el.inner_text())
+                            if val: fiyat = val; kaynak = "CSS"
+                    except:
+                        pass
+
+                # 3. YÖNTEM: REGEX (Son Çare)
+                if fiyat == 0:
+                    try:
                         body_text = page.locator("body").inner_text()
-                        # Örn: 350,90 TL formatını ara
                         bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_text)
-
-                        fiyatlar = []
-                        for ham in bulunanlar:
-                            temiz = temizle_fiyat(ham)
-                            if temiz and temiz > 1:  # 1 TL altı hatalı olabilir
-                                fiyatlar.append(temiz)
-
-                        if fiyatlar:
-                            # Genelde sayfadaki en büyük puntolu fiyat doğru fiyattır ama
-                            # biz güvenli olsun diye mantıklı (ortalama) bir değer alalım veya ilki.
-                            # Migros'ta genelde sepete ekle yanındaki fiyat sayfada üsttedir.
-                            fiyat = fiyatlar[0]
-                            kaynak = "Migros (Regex)"
+                        fiyatlar = [temizle_fiyat(x) for x in bulunanlar if temizle_fiyat(x)]
+                        if fiyatlar: fiyat = fiyatlar[0]; kaynak = "Regex"
                     except:
                         pass
 
             except Exception as e:
-                if log_callback: log_callback(f"{log_msg}\n❌ Hata: {str(e)[:50]}")
+                # Hata olsa bile durma devam et
+                pass
 
             if fiyat and fiyat > 0:
-                if log_callback: log_callback(f"{log_msg}\n✅ Fiyat: {fiyat:.2f} TL ({kaynak})")
+                if log_callback: log_callback(f"✅ {fiyat} TL")  # Kısa Log
                 veriler.append({
                     "Tarih": datetime.now().strftime("%Y-%m-%d"),
                     "Zaman": datetime.now().strftime("%H:%M"),
@@ -237,9 +233,11 @@ def migros_gida_botu(log_callback=None):
                     "URL": url
                 })
             else:
-                if log_callback: log_callback(f"{log_msg}\n⚠️ Fiyat Bulunamadı (Manuel Kontrol Gerekebilir)")
+                if log_callback: log_callback("❌ Bulunamadı")
 
-            time.sleep(random.uniform(1.0, 2.0))
+            # İki ürün arası bekleme süresini kaldırdık (Turbo Mod)
+            # Sadece IP ban yememek için milisaniyelik nefes
+            time.sleep(0.1)
 
         browser.close()
 
@@ -256,11 +254,11 @@ def migros_gida_botu(log_callback=None):
                     except:
                         start = 0
                     df_new.to_excel(writer, sheet_name='Fiyat_Log', index=False, header=False, startrow=start)
-            return f"🍏 {len(veriler)} Gıda Ürünü Güncellendi!"
+            return f"🏁 Bitti! {len(veriler)} ürün güncellendi."
         except Exception as e:
             return f"Kayıt Hatası: {e}"
 
-    return "❌ Veri Bulunamadı"
+    return "Veri Yok"
 
 
 # --- DASHBOARD MODU ---
