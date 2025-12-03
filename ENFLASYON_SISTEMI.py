@@ -10,67 +10,94 @@ import time
 import sys
 import subprocess
 import json
-from github import Github  # PyGithub kütüphanesi
-from io import BytesIO  # Dosyaları hafızada işlemek için
+from github import Github
+from io import BytesIO
 
 # --- 1. SAYFA VE TASARIM AYARLARI ---
 st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="💸", layout="wide", initial_sidebar_state="collapsed")
 
-# CSS AYARLARI (ŞOV İÇİN GÜNCELLENDİ)
+# CSS AYARLARI (ULTRA ŞOV MODU)
 st.markdown("""
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');
+
         [data-testid="stSidebar"] {display: none;}
         [data-testid="stToolbar"] {visibility: hidden !important;} 
         .stDeployButton {display:none !important;} 
         footer {visibility: hidden;} 
         #MainMenu {visibility: hidden;}
-        .stApp {background-color: #f4f6f9; color: #212529;}
 
-        /* Ticker - Daha Modern */
-        .ticker-wrap {
-            width: 100%; overflow: hidden; background: linear-gradient(90deg, #1e3c72 0%, #2a5298 100%);
-            color: white; border-bottom: 3px solid #ebc71d; white-space: nowrap;
-            padding: 10px 0; box-shadow: 0 4px 15px rgba(0,0,0,0.1); margin-bottom: 25px;
+        .stApp {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: 'Roboto', sans-serif;
+            color: #2c3e50;
         }
-        .ticker { display: inline-block; animation: ticker 45s linear infinite; }
-        .ticker-item { display: inline-block; padding: 0 2rem; font-family: 'Roboto', sans-serif; font-weight: 500; font-size: 15px; }
+
+        /* Ticker - SİYAH VE MODERN */
+        .ticker-wrap {
+            width: 100%; overflow: hidden; background-color: #000000;
+            color: #00ff00; border-bottom: 2px solid #ebc71d; white-space: nowrap;
+            padding: 12px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.3); margin-bottom: 25px;
+        }
+        .ticker { display: inline-block; animation: ticker 50s linear infinite; }
+        .ticker-item { 
+            display: inline-block; padding: 0 2rem; 
+            font-family: 'Courier New', monospace; font-weight: 700; font-size: 16px; 
+            letter-spacing: 1px;
+        }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* Kartlar - Glassmorphism Efekti */
+        /* Kartlar - Glassmorphism & Hover */
         div[data-testid="metric-container"] {
-            background: #FFFFFF; border: none; border-radius: 15px; padding: 25px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); transition: transform 0.3s ease;
+            background: rgba(255, 255, 255, 0.85); 
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px; padding: 25px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         div[data-testid="metric-container"]:hover {
-            transform: translateY(-5px);
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: #ebc71d;
         }
 
-        /* Panel - Ortalanmış ve Şık */
+        /* Panel - Kontrol Merkezi */
         .admin-panel {
-            background-color: #FFFFFF; border-top: 5px solid #28a745; padding: 40px;
-            border-radius: 20px; margin-top: 60px; box-shadow: 0 -10px 40px rgba(0,0,0,0.08);
+            background: #ffffff; border-top: 5px solid #2ecc71; padding: 40px;
+            border-radius: 24px; margin-top: 60px; 
+            box-shadow: 0 -15px 50px rgba(0,0,0,0.05);
             text-align: center;
         }
 
         /* DEV Buton */
         .big-btn button {
-            background: linear-gradient(45deg, #11998e, #38ef7d) !important;
+            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%) !important;
             color: white !important;
             border: none !important;
-            height: 70px;
-            font-size: 22px !important;
+            height: 75px;
+            font-size: 24px !important;
             font-weight: 800 !important;
-            border-radius: 12px !important;
-            box-shadow: 0 10px 20px rgba(56, 239, 125, 0.3);
+            border-radius: 50px !important;
+            box-shadow: 0 10px 25px rgba(56, 239, 125, 0.4);
             transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
         .big-btn button:hover {
-            box-shadow: 0 15px 30px rgba(56, 239, 125, 0.5);
-            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(56, 239, 125, 0.6);
+            transform: translateY(-3px);
+            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%) !important;
         }
 
-        /* Tablolar */
-        .stDataFrame { border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        /* Başlık Stili */
+        .main-title {
+            font-size: 3rem; font-weight: 900; 
+            background: -webkit-linear-gradient(#1e3c72, #2a5298);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -112,7 +139,21 @@ def github_excel_guncelle(df_yeni, dosya_adi, mesaj="Veri Güncellemesi"):
         try:
             contents = repo.get_contents(dosya_adi, ref=st.secrets["github"]["branch"])
             mevcut_df = pd.read_excel(BytesIO(contents.decoded_content))
+
+            # --- AKILLI KAYIT SİSTEMİ (DUPLICATE ENGELLEME) ---
+            # Yeni gelen verilerin tarih ve kodunu al
+            yeni_tarih = df_yeni['Tarih'].iloc[0]  # Hepsi aynı gün zaten
+
+            # Mevcut veri setinden BUGÜNÜN verilerini temizle (Aynı kodlu olanları)
+            # Mantık: Eğer bugün aynı kodla veri varsa, eskisi silinir, yenisi eklenir (update mantığı)
+            mask_silinecek = (mevcut_df['Tarih'].astype(str) == str(yeni_tarih)) & (
+                mevcut_df['Kod'].isin(df_yeni['Kod']))
+            mevcut_df = mevcut_df[~mask_silinecek]
+
+            # Şimdi birleştir
             final_df = pd.concat([mevcut_df, df_yeni], ignore_index=True)
+            # --------------------------------------------------
+
         except:
             contents = None
             final_df = df_yeni
@@ -166,7 +207,6 @@ def install_browsers():
 
 # --- 🐢 GÜVENLİ BOT (SAFE MODE) 🐢 ---
 def migros_gida_botu(log_callback=None):
-    # İsimleri "Market" olarak güncelledik
     if log_callback: log_callback("🛡️ Güvenli Mod Başlatılıyor...")
     install_browsers()
 
@@ -175,7 +215,6 @@ def migros_gida_botu(log_callback=None):
         if df.empty: return "⚠️ Konfigürasyon dosyası okunamadı veya boş!"
 
         df['Kod'] = df['Kod'].astype(str).apply(kod_standartlastir)
-        # URL filtresi aynı kalmalı çünkü teknik olarak oraya gidiyor
         mask = (df['Kod'].str.startswith('01')) & (df['URL'].str.contains('migros', case=False, na=False))
         takip = df[mask].copy()
         if takip.empty: return "⚠️ Listede takip edilecek ürün yok!"
@@ -253,7 +292,7 @@ def migros_gida_botu(log_callback=None):
                     "Kod": row.get('Kod'),
                     "Madde_Adi": row.get('Madde adı'),
                     "Fiyat": fiyat,
-                    "Kaynak": "Sanal Market",  # Marka ismi gizlendi
+                    "Kaynak": "Sanal Market",
                     "URL": url
                 })
             else:
@@ -264,8 +303,8 @@ def migros_gida_botu(log_callback=None):
 
     if veriler:
         df_new = pd.DataFrame(veriler)
-        if log_callback: log_callback("💾 Veritabanına Kaydediliyor...")
-        sonuc = github_excel_guncelle(df_new, FIYAT_DOSYASI, mesaj=f"Otomatik Bot: {len(veriler)} Veri Eklendi")
+        if log_callback: log_callback("💾 Veritabanına Güncellenerek Kaydediliyor...")
+        sonuc = github_excel_guncelle(df_new, FIYAT_DOSYASI, mesaj=f"Otomatik Bot: {len(veriler)} Veri Güncellendi")
         return sonuc
 
     return "Veri Yok"
@@ -342,18 +381,18 @@ def dashboard_modu():
 
             # --- ARAYÜZ ---
 
-            # Ticker
+            # Ticker (Siyah Arkaplan)
             ticker_html = ""
             for _, r in df_analiz.sort_values('Fark', ascending=False).head(10).iterrows():
                 val = r['Fark']
-                color = "#ff6b6b" if val > 0 else "#51cf66" if val < 0 else "#ced4da"
+                color = "#ff4d4d" if val > 0 else "#2ecc71" if val < 0 else "#ffffff"  # Kırmızı artış, Yeşil düşüş
                 symbol = "▲" if val > 0 else "▼" if val < 0 else "•"
                 ticker_html += f"<span style='color:{color}'>{symbol} {r['Madde adı']} %{val * 100:.1f}</span> &nbsp;&nbsp;&nbsp;&nbsp; "
             st.markdown(
-                f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">PİYASA AKIŞI: &nbsp;&nbsp; {ticker_html}</div></div></div>""",
+                f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">CANLI PİYASA: &nbsp;&nbsp; {ticker_html}</div></div></div>""",
                 unsafe_allow_html=True)
 
-            st.title("🟡 ENFLASYON MONİTÖRÜ")
+            st.markdown(f'<div class="main-title">ENFLASYON MONİTÖRÜ</div>', unsafe_allow_html=True)
             st.caption(f"📅 Son Veri: {son_gun} | Sistem Saati: {datetime.now().strftime('%H:%M')}")
 
             # Metricler
@@ -369,16 +408,21 @@ def dashboard_modu():
             # Ana Grafikler
             c_left, c_right = st.columns([2, 1])
             with c_left:
-                fig_area = px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#ebc71d'])
-                fig_area.update_layout(margin=dict(l=0, r=0, t=0, b=0), paper_bgcolor='rgba(0,0,0,0)',
-                                       plot_bgcolor='rgba(0,0,0,0)')
+                fig_area = px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#3498db'])
+                fig_area.update_layout(
+                    title="Enflasyon Trendi",
+                    margin=dict(l=0, r=0, t=40, b=0),
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='#2c3e50')
+                )
                 st.plotly_chart(fig_area, use_container_width=True)
             with c_right:
                 val = min(max(0, abs(genel_enflasyon)), 50)
                 fig_gauge = go.Figure(go.Indicator(mode="gauge+number", value=val,
-                                                   gauge={'axis': {'range': [None, 50]}, 'bar': {'color': "#dc3545"},
+                                                   gauge={'axis': {'range': [None, 50]}, 'bar': {'color': "#e74c3c"},
                                                           'bgcolor': "white"}))
-                fig_gauge.update_layout(margin=dict(l=20, r=20, t=20, b=20), height=250)
+                fig_gauge.update_layout(margin=dict(l=20, r=20, t=20, b=20), height=250, paper_bgcolor='rgba(0,0,0,0)')
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
             # Sekmeler
@@ -392,7 +436,7 @@ def dashboard_modu():
                                                  marker=dict(color=grp['Grup_Degisim'], colorscale='RdYlGn_r'))),
                                 use_container_width=True)
 
-            with tab2:  # Marka ismi kaldırıldı
+            with tab2:
                 st.subheader("🍏 Mutfak Enflasyonu (Sanal Market Verisi)")
                 if not df_gida.empty:
                     kg1, kg2 = st.columns(2)
@@ -421,7 +465,6 @@ def dashboard_modu():
                 with c_dl_1:
                     st.subheader("📊 Detaylı Fiyat Analizi")
                 with c_dl_2:
-                    # Excel Çıktısı Alma
                     output = BytesIO()
                     with pd.ExcelWriter(output, engine='openpyxl') as writer:
                         df_analiz.to_excel(writer, index=False, sheet_name='Analiz')
@@ -435,27 +478,23 @@ def dashboard_modu():
                         type="secondary"
                     )
 
-                # --- DÜZELTME BAŞLANGIÇ ---
-                # Hatayı önlemek için tarih objesi olan kolon isimlerini string'e çeviriyoruz
                 col_baz_str = str(baz_gun)
                 col_son_str = str(son_gun)
 
-                # Gösterim için yeni bir dataframe kopyası oluşturup kolonları yeniden adlandırıyoruz
                 df_show_tab4 = df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark', baz_gun, son_gun]].copy()
                 df_show_tab4 = df_show_tab4.rename(columns={baz_gun: col_baz_str, son_gun: col_son_str})
 
-                # Şovlu Dataframe
                 st.dataframe(
                     df_show_tab4,
                     column_config={
-                        "Fark": st.column_config.BarChartColumn("Değişim Trendi", y_min=-0.5, y_max=0.5),
+                        "Fark": st.column_config.LineChartColumn("Değişim Trendi", y_min=-0.5, y_max=0.5),
+                        # Burası LineChart oldu
                         col_baz_str: st.column_config.NumberColumn(f"Baz ({col_baz_str})", format="%.2f ₺"),
                         col_son_str: st.column_config.NumberColumn(f"Son ({col_son_str})", format="%.2f ₺"),
                     },
                     use_container_width=True,
                     height=500
                 )
-                # --- DÜZELTME BİTİŞ ---
 
             with tab5:
                 cols = st.columns(4)
@@ -468,30 +507,26 @@ def dashboard_modu():
                           delta_color="inverse")
 
     else:
-        st.info("⚠️ Veri Bulunamadı. Lütfen 'Gıda Hesapla' butonunu kullanarak veri çekin.")
+        st.info("⚠️ Veri Bulunamadı. Lütfen 'Botu Başlat' butonunu kullanarak veri çekin.")
 
-    # --- YENİ YÖNETİM PANELİ (SADE & ŞIK) ---
+    # --- YENİ YÖNETİM PANELİ ---
     st.markdown('<div class="admin-panel"><div class="admin-header">🚀 SİSTEM KONTROL MERKEZİ</div>',
                 unsafe_allow_html=True)
 
-    # Gereksiz kısımlar silindi, tek bir merkez kolon var
     c_center = st.columns([1, 2, 1])[1]
 
     with c_center:
         st.markdown('<div class="big-btn">', unsafe_allow_html=True)
-        if st.button("🍏 SANAL MARKET GIDA BOTUNU BAŞLAT", type="primary", use_container_width=True):
+        if st.button("KAMPANYA BOTUNU BAŞLAT", type="primary", use_container_width=True):
             log_cont = st.empty()
 
-            # Progress Bar Efekti
-            progress_text = "Veriler toplanıyor..."
+            progress_text = "Veri kaynaklarına bağlanılıyor..."
             my_bar = st.progress(0, text=progress_text)
 
-            # Bot Callback'i (Progress barı da güncelleyebiliriz basitçe)
             def bot_logger(msg):
                 log_cont.code(msg, language="yaml")
-                # Basit bir ilerleme simülasyonu
                 try:
-                    my_bar.progress(50, text="Analiz Yapılıyor...")
+                    my_bar.progress(50, text="Fiyatlar Analiz Ediliyor...")
                 except:
                     pass
 
@@ -500,7 +535,7 @@ def dashboard_modu():
 
             if "OK" in sonuc:
                 st.success("✅ Veritabanı Başarıyla Güncellendi!")
-                st.balloons()  # Şov
+                st.balloons()
                 time.sleep(2)
                 st.rerun()
             else:
