@@ -435,17 +435,27 @@ def dashboard_modu():
                         type="secondary"
                     )
 
+                # --- DÜZELTME BAŞLANGIÇ ---
+                # Hatayı önlemek için tarih objesi olan kolon isimlerini string'e çeviriyoruz
+                col_baz_str = str(baz_gun)
+                col_son_str = str(son_gun)
+
+                # Gösterim için yeni bir dataframe kopyası oluşturup kolonları yeniden adlandırıyoruz
+                df_show_tab4 = df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark', baz_gun, son_gun]].copy()
+                df_show_tab4 = df_show_tab4.rename(columns={baz_gun: col_baz_str, son_gun: col_son_str})
+
                 # Şovlu Dataframe
                 st.dataframe(
-                    df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark', baz_gun, son_gun]],
+                    df_show_tab4,
                     column_config={
                         "Fark": st.column_config.BarChartColumn("Değişim Trendi", y_min=-0.5, y_max=0.5),
-                        baz_gun: st.column_config.NumberColumn("Baz Fiyat", format="%.2f ₺"),
-                        son_gun: st.column_config.NumberColumn("Son Fiyat", format="%.2f ₺"),
+                        col_baz_str: st.column_config.NumberColumn(f"Baz ({col_baz_str})", format="%.2f ₺"),
+                        col_son_str: st.column_config.NumberColumn(f"Son ({col_son_str})", format="%.2f ₺"),
                     },
                     use_container_width=True,
                     height=500
                 )
+                # --- DÜZELTME BİTİŞ ---
 
             with tab5:
                 cols = st.columns(4)
