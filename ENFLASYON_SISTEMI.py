@@ -14,7 +14,7 @@ from github import Github
 from io import BytesIO
 
 # --- 1. SAYFA YAPILANDIRMASI ---
-st.set_page_config(page_title="ENFLASYON MONITORU PRO", page_icon="💎", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="ENFLASYON MONITORU ", page_icon="💎", layout="wide", initial_sidebar_state="collapsed")
 
 # --- 🎨 ULTRA PREMIUM UI CSS ---
 st.markdown("""
@@ -454,7 +454,7 @@ def dashboard_modu():
 
     # ACTION BUTTON
     st.markdown('<div class="action-container"><div class="action-btn">', unsafe_allow_html=True)
-    if st.button("SİSTEMİ GÜNCELLE (MİGROS BOTU)", type="primary", use_container_width=True):
+    if st.button("Gıdamı Hesapla", type="primary", use_container_width=True):
         ph = st.empty();
         bar = st.progress(0)
         res = migros_gida_botu(lambda m: ph.info(m))
