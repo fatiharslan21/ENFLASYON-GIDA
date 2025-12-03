@@ -265,140 +265,163 @@ def migros_gida_botu(log_callback=None):
 
 
 # --- DASHBOARD MODU ---
+# --- 📊 GÜNCELLENMİŞ DASHBOARD (ANLIK GÜNCELLEME GARANTİLİ) 📊 ---
 def dashboard_modu():
-    # Veri Yükleme
+    # 1. VERİ YÜKLEME (Cache Yok - Her Seferinde Taze Okur)
     def veri_yukle():
         if not os.path.exists(FIYAT_DOSYASI): return None, None
         try:
+            # Fiyatları Oku
             df_f = pd.read_excel(FIYAT_DOSYASI, sheet_name="Fiyat_Log")
             if df_f.empty: return pd.DataFrame(), None
+
+            # Tarih ve Saat Düzenlemesi
             df_f['Tarih'] = pd.to_datetime(df_f['Tarih'])
             df_f['Kod'] = df_f['Kod'].astype(str).apply(kod_standartlastir)
             df_f['Fiyat'] = pd.to_numeric(df_f['Fiyat'], errors='coerce')
-            df_f.loc[df_f['Fiyat'] <= 0, 'Fiyat'] = np.nan
 
+            # Fiyatı 0 veya Boş Olanları Temizle (Grafiği Bozmasın)
+            df_f = df_f[df_f['Fiyat'] > 0]
+
+            # Sepet Ağırlıklarını Oku
             df_s = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
             df_s['Kod'] = df_s['Kod'].astype(str).apply(kod_standartlastir)
+
+            # Gruplandırma ve Emoji
             grup_map = {"01": "Gıda", "02": "Alkol", "03": "Giyim", "04": "Konut", "05": "Ev", "06": "Sağlık",
                         "07": "Ulaşım", "08": "İletişim", "09": "Eğlence", "10": "Eğitim", "11": "Lokanta",
                         "12": "Çeşitli"}
-            df_s['Grup'] = df_s['Kod'].str[:2].map(grup_map)
             emoji_map = {"01": "🍎", "02": "🍷", "03": "👕", "04": "🏠", "05": "🛋️", "06": "💊", "07": "🚗", "08": "📱",
                          "09": "🎭", "10": "🎓", "11": "🍽️", "12": "💅"}
+            df_s['Grup'] = df_s['Kod'].str[:2].map(grup_map)
             df_s['Emoji'] = df_s['Kod'].str[:2].map(emoji_map).fillna("📦")
+
             return df_f, df_s
         except:
             return None, None
 
     df_fiyat, df_sepet = veri_yukle()
 
-    # --- PIVOT VE ANALİZ ---
+    # --- 2. HESAPLAMA MOTORU (DÜZELTİLDİ) ---
     if df_fiyat is not None and not df_fiyat.empty:
+        # Tarih ve Saat sütununu birleştirip sıralama yapıyoruz (En son veriyi bulmak için)
+        # Eğer 'Zaman' sütunu varsa kullan, yoksa sadece Tarih
+        if 'Zaman' in df_fiyat.columns:
+            df_fiyat['Tam_Zaman'] = pd.to_datetime(df_fiyat['Tarih'].astype(str) + ' ' + df_fiyat['Zaman'].astype(str),
+                                                   errors='coerce')
+        else:
+            df_fiyat['Tam_Zaman'] = df_fiyat['Tarih']
+
+        df_fiyat = df_fiyat.sort_values('Tam_Zaman')  # Eskiden yeniye sırala
         df_fiyat['Gun'] = df_fiyat['Tarih'].dt.date
+
+        # Manuel mi?
         df_fiyat['Is_Manuel'] = df_fiyat['Kaynak'].astype(str).str.contains('Manuel', na=False)
 
-        def oncelik(x):
-            return x[x['Is_Manuel']] if x['Is_Manuel'].any() else x
+        # Temizlik ve Önceliklendirme
+        # Aynı gün hem Otomatik hem Manuel varsa Manuel'i al.
+        # Aynı gün 3 tane Otomatik varsa EN SONUNCUSUNU al (aggfunc='last')
+        def veri_hazirla(df):
+            # Pivot Table: Satırlar Kod, Sütunlar Gün, Değer Fiyat
+            # aggfunc='last' -> O günkü EN SON fiyatı alır. (Ortalama almaz!)
+            piv = df.pivot_table(index='Kod', columns='Gun', values='Fiyat', aggfunc='last')
+            # Eksik günleri önceki günden tamamla (Forward Fill)
+            piv = piv.ffill(axis=1).bfill(axis=1)
+            return piv
 
-        df_clean = df_fiyat.groupby(['Kod', 'Gun']).apply(oncelik).reset_index(drop=True)
-        pivot = df_clean.pivot_table(index='Kod', columns='Gun', values='Fiyat', aggfunc='mean').ffill(axis=1).bfill(
-            axis=1)
+        pivot = veri_hazirla(df_fiyat)
 
         if not pivot.empty:
+            # Sepet ile Fiyatları Birleştir
             df_analiz = pd.merge(df_sepet, pivot, on='Kod', how='left').dropna(subset=['Agirlik_2025'])
-            gunler = sorted(pivot.columns)
-            baz, son = gunler[0], gunler[-1]
 
-            # Genel Trend
+            gunler = sorted(pivot.columns)
+            baz_gun = gunler[0]
+            son_gun = gunler[-1]  # En son veri tarihi (Bugün)
+
+            # --- ANA METRİKLERİ HESAPLA ---
+
+            # 1. Genel Enflasyon
+            # Endeks Formülü: (Son Fiyat * Ağırlık) / (Baz Fiyat * Ağırlık)
+            toplam_agirlik = df_analiz['Agirlik_2025'].sum()
+
+            # Tarihçeli Trend Verisi
             trend_data = []
             for g in gunler:
-                tmp = df_analiz.dropna(subset=[g, baz])
-                if not tmp.empty:
-                    val = ((tmp[g] / tmp[baz]) * 100 * tmp['Agirlik_2025']).sum() / tmp['Agirlik_2025'].sum()
-                    trend_data.append({"Tarih": g, "TÜFE": val})
+                temp = df_analiz.dropna(subset=[g, baz_gun])
+                if not temp.empty:
+                    # Laspeyres Benzeri Endeks Hesabı
+                    # Puan = (O günkü Fiyat / Baz Fiyat) * Ağırlık
+                    temp['Puan'] = (temp[g] / temp[baz_gun]) * temp['Agirlik_2025']
+                    endeks_degeri = (temp['Puan'].sum() / temp['Agirlik_2025'].sum()) * 100
+                    trend_data.append({"Tarih": g, "TÜFE": endeks_degeri})
+
             df_trend = pd.DataFrame(trend_data)
+            son_endeks = df_trend['TÜFE'].iloc[-1]
+            genel_enflasyon = ((son_endeks / 100) - 1) * 100
 
-            son_tufe = df_trend['TÜFE'].iloc[-1]
-            enflasyon = ((son_tufe / df_trend['TÜFE'].iloc[0]) - 1) * 100
-
-            df_analiz['Fark'] = (df_analiz[son] / df_analiz[baz]) - 1
+            # Ürün Bazlı Değişim (Son Gün vs Baz Gün)
+            df_analiz['Fark'] = (df_analiz[son_gun] / df_analiz[baz_gun]) - 1
             top_artis = df_analiz.sort_values('Fark', ascending=False).iloc[0]
 
-            # --- 🍏 GIDA ENFLASYONU HESAPLAMA ---
+            # --- 🍏 GIDA ENFLASYONU HESAPLAMA (ÖZEL) ---
             df_gida = df_analiz[df_analiz['Kod'].str.startswith("01")].copy()
             if not df_gida.empty:
-                gida_baz_fiyat = (df_gida[baz] * df_gida['Agirlik_2025']).sum()
-                gida_son_fiyat = (df_gida[son] * df_gida['Agirlik_2025']).sum()
-                if gida_baz_fiyat > 0:
-                    gida_enflasyonu = ((gida_son_fiyat / gida_baz_fiyat) - 1) * 100
-                    gida_aylik = df_gida['Fark'].mean() * 100
-                else:
-                    gida_enflasyonu = 0
-                    gida_aylik = 0
+                # Gıda Ağırlıklı Ortalaması
+                # Formül: Σ(SonFiyat/BazFiyat * Ağırlık) / Σ(Ağırlık) - 1
+                df_gida['Gida_Endeks_Etkisi'] = (df_gida[son_gun] / df_gida[baz_gun]) * df_gida['Agirlik_2025']
+                gida_endeks = df_gida['Gida_Endeks_Etkisi'].sum() / df_gida['Agirlik_2025'].sum()
+                gida_enflasyonu = (gida_endeks - 1) * 100
+
+                # Aylık/Günlük Ortalama Basit Değişim
+                gida_aylik = df_gida['Fark'].mean() * 100
             else:
-                gida_enflasyonu = 0
+                gida_enflasyonu = 0;
                 gida_aylik = 0
 
-            # --- 1. TICKER (KAYAN YAZI) ---
+            # --- 🎨 ARAYÜZ KISMI 🎨 ---
+
+            # Ticker
             ticker_html = ""
-            top_up = df_analiz.sort_values('Fark', ascending=False).head(5)
-            ticker_items = top_up
-            for _, r in ticker_items.iterrows():
-                val = r['Fark']
-                ticker_html += f"<span style='color:#dc3545'>▲ {r['Madde adı']} %{val * 100:.1f}</span> &nbsp;&nbsp;&nbsp;&nbsp; "
+            for _, r in df_analiz.sort_values('Fark', ascending=False).head(5).iterrows():
+                ticker_html += f"<span style='color:#dc3545'>▲ {r['Madde adı']} %{r['Fark'] * 100:.1f}</span> &nbsp;&nbsp; "
             st.markdown(
-                f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">PİYASA ÖZETİ: &nbsp;&nbsp; {ticker_html}</div></div></div>""",
+                f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">PİYASA: &nbsp; {ticker_html}</div></div></div>""",
                 unsafe_allow_html=True)
 
-            # --- 2. BAŞLIK VE METRİKLER ---
             st.title("🟡 ENFLASYON MONİTÖRÜ")
 
-            # --- 3. TABS (SEKMELER) ---
+            # SEKMELER
             tab1, tab2, tab3, tab4, tab5 = st.tabs(
                 ["GENEL BAKIŞ", "🍏 GIDA ENFLASYONU", "SEKTÖREL", "DETAYLI LİSTE", "SİMÜLASYON"])
 
-            with tab1:
-                # Genel Panel
+            with tab1:  # Genel
                 c1, c2, c3, c4 = st.columns(4)
-                c1.metric("GENEL ENDEKS", f"{son_tufe:.2f}", "Baz: 100")
-                c2.metric("GENEL ENFLASYON", f"%{enflasyon:.2f}", delta_color="inverse")
-                c3.metric("ZAM ŞAMPİYONU", f"{top_artis['Madde adı'][:12]}..", f"%{top_artis['Fark'] * 100:.1f}",
+                c1.metric("GENEL ENDEKS", f"{son_endeks:.2f}", "Baz: 100")
+                c2.metric("GENEL ENFLASYON", f"%{genel_enflasyon:.2f}", delta_color="inverse")
+                c3.metric("ZAM ŞAMPİYONU", f"{top_artis['Madde adı'][:10]}..", f"%{top_artis['Fark'] * 100:.1f}",
                           delta_color="inverse")
-                c4.metric("VERİ GÜVENİ", f"%{100 - (df_analiz[son].isna().sum() / len(df_analiz) * 100):.0f}",
-                          f"{len(gunler)} Gün")
+                c4.metric("VERİ TARİHİ", str(son_gun), f"{len(gunler)} Günlük Veri")
+                st.plotly_chart(px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#ebc71d']),
+                                use_container_width=True)
 
-                c_left, c_right = st.columns([2, 1])
-                with c_left:
-                    st.plotly_chart(px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#ebc71d']),
-                                    use_container_width=True)
-                with c_right:
-                    val = min(max(0, abs(enflasyon)), 50)
-                    st.plotly_chart(go.Figure(go.Indicator(mode="gauge+number", value=val,
-                                                           gauge={'axis': {'range': [None, 50]},
-                                                                  'bar': {'color': "#dc3545"}, 'bgcolor': "white"})),
-                                    use_container_width=True)
-
-            with tab2:
-                # 🍏 ÖZEL GIDA ENFLASYONU SEKME 🍏
+            with tab2:  # 🍏 GIDA
                 st.subheader("🍏 Mutfak Enflasyonu (Migros Endeksi)")
                 if not df_gida.empty:
                     kg1, kg2, kg3 = st.columns(3)
-                    kg1.metric("GIDA ENFLASYONU (Kümülatif)", f"%{gida_enflasyonu:.2f}", delta_color="inverse")
-                    kg2.metric("Ortalama Gıda Artışı", f"%{gida_aylik:.2f}")
+                    kg1.metric("GIDA ENFLASYONU", f"%{gida_enflasyonu:.2f}", "Kümülatif", delta_color="inverse")
+                    kg2.metric("Ortalama Ürün Artışı", f"%{gida_aylik:.2f}")
                     kg3.metric("Takip Edilen Ürün", f"{len(df_gida)} Adet")
 
-                    st.markdown("#### 🥦 Gıda Ürünlerinde Değişim")
+                    st.divider()
+                    st.markdown("#### 🥦 Ürün Bazlı Değişimler")
 
-                    # --- HATA DÜZELTME ALANI ---
-                    # Önce veriyi hazırlıyoruz
-                    df_gida_show = df_gida[['Madde adı', 'Fark', son]].sort_values('Fark', ascending=False)
-
-                    # KRİTİK DÜZELTME: Kolon adı olan 'son' (Tarih objesi) yerine string kullanıyoruz.
-                    # Kolon adını 'Son_Tutar' olarak değiştiriyoruz ki JSON hatası vermesin.
-                    df_gida_show = df_gida_show.rename(columns={son: "Son_Tutar"})
+                    # Tablo Hazırlığı (JSON Hatası Çözümü İçin Rename)
+                    df_show = df_gida[['Madde adı', 'Fark', son_gun]].sort_values('Fark', ascending=False)
+                    df_show = df_show.rename(columns={son_gun: "Son_Tutar"})  # Tarih objesini string isme çevir
 
                     st.dataframe(
-                        df_gida_show,
+                        df_show,
                         column_config={
                             "Fark": st.column_config.ProgressColumn("Değişim", format="%.2f%%", min_value=-0.5,
                                                                     max_value=0.5),
@@ -407,27 +430,28 @@ def dashboard_modu():
                         hide_index=True, use_container_width=True
                     )
                 else:
-                    st.warning("Henüz 01 kodlu Gıda verisi bulunamadı.")
+                    st.warning("Gıda verisi bulunamadı.")
 
-            with tab3:
+            with tab3:  # Sektörel
                 df_analiz['Grup_Degisim'] = df_analiz.groupby('Grup')['Fark'].transform('mean') * 100
-                grup_data = df_analiz[['Grup', 'Grup_Degisim']].drop_duplicates().sort_values('Grup_Degisim')
-                st.plotly_chart(go.Figure(go.Bar(y=grup_data['Grup'], x=grup_data['Grup_Degisim'], orientation='h',
-                                                 marker=dict(color=grup_data['Grup_Degisim'], colorscale='RdYlGn_r'))),
+                grp = df_analiz[['Grup', 'Grup_Degisim']].drop_duplicates().sort_values('Grup_Degisim')
+                st.plotly_chart(go.Figure(go.Bar(y=grp['Grup'], x=grp['Grup_Degisim'], orientation='h',
+                                                 marker=dict(color=grp['Grup_Degisim'], colorscale='RdYlGn_r'))),
                                 use_container_width=True)
 
-            with tab4:
-                st.dataframe(df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark', son]], use_container_width=True)
+            with tab4:  # Detaylı
+                st.dataframe(df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark']], use_container_width=True)
 
-            with tab5:
-                st.info("Kutucuklara beklediğiniz % zam oranını girin.")
+            with tab5:  # Simülasyon
+                st.info("Beklenen zam oranlarını giriniz.")
                 cols = st.columns(4)
                 sim_inputs = {grp: cols[i % 4].number_input(f"{grp} (%)", -100.0, 100.0, 0.0) for i, grp in
                               enumerate(sorted(df_analiz['Grup'].unique()))}
                 etki = sum(
                     [(df_analiz[df_analiz['Grup'] == g]['Agirlik_2025'].sum() / df_analiz['Agirlik_2025'].sum()) * v for
                      g, v in sim_inputs.items()])
-                st.metric("Simüle Enflasyon", f"%{enflasyon + etki:.2f}", f"{etki:+.2f}% Etki", delta_color="inverse")
+                st.metric("Simüle Enflasyon", f"%{genel_enflasyon + etki:.2f}", f"{etki:+.2f}% Etki",
+                          delta_color="inverse")
 
     else:
         st.info("⚠️ Veri Bulunamadı. Lütfen Botu Çalıştırın.")
@@ -441,29 +465,26 @@ def dashboard_modu():
         uf = st.file_uploader("", type=['xlsx'], label_visibility="collapsed")
         if uf:
             pd.read_excel(uf).to_excel(FIYAT_DOSYASI, sheet_name='Fiyat_Log', index=False)
-            st.success("Yüklendi!")
+            st.success("Yüklendi!");
             time.sleep(1);
             st.rerun()
 
     with c_bot:
-        st.markdown("**⚠️ Genel Bot (Tümü)**")
-        if st.button("Tüm Verileri Çek", use_container_width=True):
-            st.warning("Bu mod şu an pasif. Migros modunu kullanın.")
+        st.markdown("**⚠️ Genel Bot**")
+        st.button("Tüm Verileri Çek", disabled=True)  # Pasif yaptık
 
     with c_migros:
         st.markdown("**🍏 Gıda Enflasyonu**")
-        # ÖZEL TURUNCU BUTON (CSS ile renklendirildi)
         st.markdown('<div class="migros-btn">', unsafe_allow_html=True)
         if st.button("🍏 GIDA HESAPLA (MİGROS)", type="primary", use_container_width=True):
-            log_container = st.empty()
+            log_cont = st.empty()
+            # Botu Çalıştır
+            sonuc = migros_gida_botu(lambda m: log_cont.code(m, language="yaml"))
 
-            def log_yazici(mesaj):
-                log_container.code(mesaj, language="yaml")
-
-            sonuc = migros_gida_botu(log_yazici)
-
-            if "Güncellendi" in sonuc:
+            if "Güncellendi" in sonuc or "Tamamlandı" in sonuc:
                 st.success(sonuc)
+                # ÖNBELLEĞİ TEMİZLE VE YENİLE
+                st.cache_data.clear()
                 time.sleep(2)
                 st.rerun()
             else:
