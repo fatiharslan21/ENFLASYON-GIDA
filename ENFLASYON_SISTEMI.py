@@ -132,8 +132,9 @@ def install_browsers():
 # --- 🤖 ÖZEL MİGROS GIDA BOTU 🤖 ---
 # --- 🤖 GÜNCELLENMİŞ MİGROS GIDA BOTU (Terminator Modu) 🤖 ---
 # --- 🚀 MİGROS TURBO BOT (GÖRSELSİZ & HIZLI) 🚀 ---
+# --- ⚡ AKILLI TURBO MOD (Resimsiz ama Garantili) ⚡ ---
 def migros_gida_botu(log_callback=None):
-    if log_callback: log_callback("⚡ Turbo Mod Devrede: Görseller ve Gereksiz Dosyalar Engelleniyor...")
+    if log_callback: log_callback("⚡ Akıllı Hız Modu: Görseller Kapalı, Veri Odaklı...")
     install_browsers()
 
     try:
@@ -148,7 +149,7 @@ def migros_gida_botu(log_callback=None):
     veriler = []
     total = len(takip)
 
-    if log_callback: log_callback(f"🏎️ {total} Ürün Hızla Taranıyor...")
+    if log_callback: log_callback(f"🏎️ {total} Ürün Taranıyor...")
 
     with sync_playwright() as p:
         browser = p.firefox.launch(headless=True)
@@ -156,11 +157,13 @@ def migros_gida_botu(log_callback=None):
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
         )
 
-        # --- HIZLANDIRMA SİHİRLİ KODU ---
-        # Görselleri, fontları ve medyaları yüklemeyi YASAKLIYORUZ.
         page = context.new_page()
+
+        # --- OPTİMİZASYON AYARI ---
+        # Sadece görselleri, medyayı ve fontları engelliyoruz.
+        # Stylesheet (CSS) açık kalmalı yoksa Migros veriyi oluşturamıyor.
         page.route("**/*", lambda route: route.abort()
-        if route.request.resource_type in ["image", "media", "font", "stylesheet"]
+        if route.request.resource_type in ["image", "media", "font"]
         else route.continue_())
 
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
@@ -169,24 +172,25 @@ def migros_gida_botu(log_callback=None):
             urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
             url = row['URL']
 
-            # Daha az log basıyoruz ki konsol yorulmasın
-            log_msg = f"⚡ [{i + 1}/{total}] {urun_adi}..."
-            if log_callback: log_callback(log_msg)
+            if log_callback: log_callback(f"⚡ [{i + 1}/{total}] {urun_adi}...")
 
             fiyat = 0.0
             kaynak = ""
 
             try:
-                # Networkidle yerine domcontentloaded kullanıyoruz (Daha Hızlı)
-                page.goto(url, timeout=20000, wait_until="domcontentloaded")
+                # Sayfaya git
+                page.goto(url, timeout=30000, wait_until="domcontentloaded")
 
-                # Bekleme süresini 0.5 saniyeye düşürdük (Sadece JS otursun diye)
-                time.sleep(0.5)
+                # Sleep YOK. Onun yerine elemanı bekleme var.
+                # JSON verisi veya Fiyat etiketi hangisi önce gelirse onu kapacağız.
 
-                # 1. HIZLI YÖNTEM: JSON-LD (Metadata)
+                # 1. YÖNTEM: JSON-LD (En Temiz Veri)
                 try:
+                    # Maksimum 3 saniye JSON scriptini bekle (Varsa hemen alır, yoksa hata verir geçer)
+                    page.wait_for_selector("script[type='application/ld+json']", timeout=3000)
                     json_data = page.locator("script[type='application/ld+json']").first.inner_text()
                     data = json.loads(json_data)
+
                     if "offers" in data and "price" in data["offers"]:
                         fiyat = float(data["offers"]["price"])
                         kaynak = "Meta"
@@ -196,18 +200,22 @@ def migros_gida_botu(log_callback=None):
                 except:
                     pass
 
-                # 2. YÖNTEM: CSS (Eğer JSON yoksa bakar)
+                # 2. YÖNTEM: Görsel Seçiciler (Eğer JSON gelmediyse)
                 if fiyat == 0:
                     try:
-                        # Fiyat etiketini 2 saniye arar, bulursa alır, bulamazsa geçer
-                        el = page.locator("sm-product-price .amount, .product-price, #price-value").first
-                        if el.is_visible(timeout=2000):
+                        # Fiyat etiketini bekle (En fazla 2 sn)
+                        # Geldiği an alır, sleep gibi boşuna beklemez.
+                        el = page.wait_for_selector(
+                            "sm-product-price .amount, .product-price, #price-value",
+                            timeout=2000
+                        )
+                        if el:
                             val = temizle_fiyat(el.inner_text())
                             if val: fiyat = val; kaynak = "CSS"
                     except:
                         pass
 
-                # 3. YÖNTEM: REGEX (Son Çare)
+                # 3. YÖNTEM: Regex (Acil Durum)
                 if fiyat == 0:
                     try:
                         body_text = page.locator("body").inner_text()
@@ -218,11 +226,10 @@ def migros_gida_botu(log_callback=None):
                         pass
 
             except Exception as e:
-                # Hata olsa bile durma devam et
                 pass
 
             if fiyat and fiyat > 0:
-                if log_callback: log_callback(f"✅ {fiyat} TL")  # Kısa Log
+                if log_callback: log_callback(f"✅ {fiyat} TL")
                 veriler.append({
                     "Tarih": datetime.now().strftime("%Y-%m-%d"),
                     "Zaman": datetime.now().strftime("%H:%M"),
@@ -234,10 +241,6 @@ def migros_gida_botu(log_callback=None):
                 })
             else:
                 if log_callback: log_callback("❌ Bulunamadı")
-
-            # İki ürün arası bekleme süresini kaldırdık (Turbo Mod)
-            # Sadece IP ban yememek için milisaniyelik nefes
-            time.sleep(0.1)
 
         browser.close()
 
@@ -254,7 +257,7 @@ def migros_gida_botu(log_callback=None):
                     except:
                         start = 0
                     df_new.to_excel(writer, sheet_name='Fiyat_Log', index=False, header=False, startrow=start)
-            return f"🏁 Bitti! {len(veriler)} ürün güncellendi."
+            return f"🏁 Tamamlandı! {len(veriler)} fiyat alındı."
         except Exception as e:
             return f"Kayıt Hatası: {e}"
 
