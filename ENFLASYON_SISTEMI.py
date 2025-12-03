@@ -63,11 +63,17 @@ st.markdown("""
 
         /* BOT MESAJ KUTUSU */
         .bot-msg {
-            background-color: #eff6ff; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 8px;
-            font-size: 16px; line-height: 1.6; color: #1e3a8a; margin-bottom: 20px;
+            background-color: #eff6ff; border-left: 5px solid #3b82f6; padding: 25px; border-radius: 12px;
+            font-size: 16px; line-height: 1.6; color: #1e3a8a; margin-bottom: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .bot-bad { border-left-color: #ef4444; background-color: #fef2f2; color: #991b1b; }
         .bot-good { border-left-color: #22c55e; background-color: #f0fdf4; color: #166534; }
+
+        /* INPUT STİLİ */
+        .stTextInput input {
+            padding: 15px; font-size: 18px; border-radius: 12px; border: 2px solid #e2e8f0;
+        }
+        .stTextInput input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); }
     </style>
 """, unsafe_allow_html=True)
 
@@ -252,76 +258,86 @@ def dashboard_modu():
             c4.metric("ZİRVEDEKİ", f"{top['Madde adı'][:15]}", f"%{top['Fark'] * 100:.1f}", delta_color="inverse")
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # GRAFİK
-            fig = px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#3b82f6'])
-            fig.update_layout(plot_bgcolor='white', margin=dict(t=0, b=0, l=0, r=0),
-                              yaxis=dict(showgrid=True, gridcolor='#f1f5f9'))
-            st.plotly_chart(fig, use_container_width=True)
-
             # SEKMELER
             t1, t2, t3, t4, t5, t6, t7 = st.tabs(
-                ["🫧 PİYASA BALONCUKLARI", "🤖 ASİSTAN ANALİZİ", "🍏 GIDA DETAY", "🚀 ZİRVE", "📉 FIRSATLAR", "📑 TAM LİSTE",
+                ["🤖 ASİSTAN", "🫧 PİYASA BALONCUKLARI", "🍏 GIDA DETAY", "🚀 ZİRVE", "📉 FIRSATLAR", "📑 TAM LİSTE",
                  "🎲 SİMÜLASYON"])
 
-            with t1:  # 360 YERİNE BUBBLE CHART
+            with t1:  # 🤖 ASİSTAN SORGULAMA (YENİ)
+                st.markdown("##### 🤖 Merhaba, neyi merak ediyorsun?")
+                sorgu = st.text_input("", placeholder="Örn: Süt, Ekmek, Gıda, Alkol...", key="asistan_input")
+
+                if sorgu:
+                    # Arama İşlemi
+                    sorgu = sorgu.lower()
+                    sonuc_urun = df_analiz[df_analiz['Madde adı'].str.lower().str.contains(sorgu, na=False)]
+                    sonuc_grup = df_analiz[df_analiz['Grup'].str.lower().str.contains(sorgu, na=False)]
+
+                    if not sonuc_urun.empty:
+                        # Ürün Bulunduysa En İlgiliyi Al
+                        row = sonuc_urun.iloc[0]
+                        fark = row['Fark'] * 100
+
+                        emoji = "📈" if fark > 0 else "🎉" if fark < 0 else "😐"
+                        stil = "bot-bad" if fark > 0 else "bot-good" if fark < 0 else "bot-msg"
+                        yorum = "maalesef zamlandı." if fark > 0 else "indirimde!" if fark < 0 else "fiyatını koruyor."
+
+                        st.markdown(f"""
+                        <div class="{stil}">
+                            <h3>{emoji} {row['Madde adı']} Analizi</h3>
+                            <p>Sistemi taradım. Bu ürün <b>{baz}</b> tarihinde <b>{row[baz]:.2f} TL</b> iken, bugün <b>{row[son]:.2f} TL</b> olmuş.</p>
+                            <p>Genel değişim: <b>%{fark:.2f}</b> oranında {yorum}</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        # Grafik
+                        kod = row['Kod']
+                        hist = df_f[df_f['Kod'] == kod].sort_values('Tam_Zaman')
+                        fig_l = px.line(hist, x='Tam_Zaman', y='Fiyat', markers=True,
+                                        title=f"{row['Madde adı']} Fiyat Grafiği")
+                        fig_l.update_traces(line_color='#3b82f6', line_width=4)
+                        fig_l.update_layout(plot_bgcolor='white', xaxis_title="", yaxis_title="Fiyat (TL)")
+                        st.plotly_chart(fig_l, use_container_width=True)
+
+                        if len(sonuc_urun) > 1:
+                            st.info(
+                                f"💡 Ayrıca şunları da buldum: {', '.join(sonuc_urun['Madde adı'].tolist()[1:5])}...")
+
+                    elif not sonuc_grup.empty:
+                        # Kategori Bulunduysa
+                        grp_name = sonuc_grup.iloc[0]['Grup']
+                        grp_data = df_analiz[df_analiz['Grup'] == grp_name]
+                        grp_enf = ((grp_data[son] / grp_data[baz] * grp_data['Agirlik_2025']).sum() / grp_data[
+                            'Agirlik_2025'].sum() - 1) * 100
+
+                        st.markdown(f"""
+                        <div class="bot-msg">
+                            <h3>📂 {grp_name} Kategorisi Raporu</h3>
+                            <p>Bu kategorideki genel enflasyon oranı: <b>%{grp_enf:.2f}</b></p>
+                            <p>Kategoride toplam <b>{len(grp_data)}</b> ürün takip ediliyor.</p>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        st.dataframe(grp_data[['Madde adı', 'Fark', son]].sort_values('Fark', ascending=False),
+                                     use_container_width=True)
+
+                    else:
+                        st.warning(
+                            "😕 Üzgünüm, veri tabanında böyle bir ürün veya kategori bulamadım. Lütfen başka bir kelime dene.")
+
+                else:
+                    st.info("👆 Yukarıya bir ürün adı yaz, senin için analiz edeyim.")
+
+            with t2:  # BUBBLE CHART
                 st.markdown("##### 🫧 Piyasa Fiyat Dağılımı")
                 df_analiz['Yuzde_Degisim'] = df_analiz['Fark'] * 100
                 fig_bub = px.scatter(
-                    df_analiz,
-                    x="Grup", y="Yuzde_Degisim",
+                    df_analiz, x="Grup", y="Yuzde_Degisim",
                     size="Agirlik_2025", color="Yuzde_Degisim",
-                    hover_name="Madde adı",
-                    color_continuous_scale="RdYlGn_r",
-                    size_max=60,
-                    title="Grup Bazlı Fiyat Değişimleri (Baloncuk Büyüklüğü = Önem Derecesi)"
+                    hover_name="Madde adı", color_continuous_scale="RdYlGn_r", size_max=60
                 )
                 fig_bub.update_layout(plot_bgcolor='white', yaxis_title="Değişim (%)", xaxis_title="")
                 st.plotly_chart(fig_bub, use_container_width=True)
-
-            with t2:  # BOT GİBİ ANALİZ
-                st.markdown("##### 🤖 Ürün Asistanı")
-                col_sel, col_stat = st.columns([1, 2])
-                with col_sel:
-                    secilen = st.selectbox("Analiz edilecek ürünü seçin:",
-                                           df_analiz['Madde adı'].sort_values().unique())
-
-                with col_stat:
-                    row = df_analiz[df_analiz['Madde adı'] == secilen].iloc[0]
-                    fark = row['Fark'] * 100
-                    fiyat_baz = row[baz]
-                    fiyat_son = row[son]
-
-                    # Bot Metni Oluşturma
-                    if fark > 0:
-                        emoji = "📈";
-                        stil = "bot-bad";
-                        yorum = "ne yazık ki zamlandı."
-                        extra = f"Bu artış bütçeni zorlayabilir."
-                    elif fark < 0:
-                        emoji = "🎉";
-                        stil = "bot-good";
-                        yorum = "ucuzladı!"
-                        extra = "Fırsatı değerlendirmek isteyebilirsin."
-                    else:
-                        emoji = "😐";
-                        stil = "bot-msg";
-                        yorum = "fiyatını korudu."
-                        extra = "Stabil seyrediyor."
-
-                    msj = f"""
-                    **{emoji} {secilen} Raporu:**<br>
-                    Bu ürün **{baz}** tarihinde **{fiyat_baz:.2f} TL** iken, bugün **{fiyat_son:.2f} TL** seviyesine geldi.<br>
-                    Genel tabloya baktığımda ürünün **%{abs(fark):.2f} oranında {yorum}** görüyorum. {extra}
-                    """
-                    st.markdown(f'<div class="{stil}">{msj}</div>', unsafe_allow_html=True)
-
-                # Ürün Grafiği
-                kod = row['Kod']
-                hist = df_f[df_f['Kod'] == kod].sort_values('Tam_Zaman')
-                fig_l = px.line(hist, x='Tam_Zaman', y='Fiyat', markers=True)
-                fig_l.update_traces(line_color='#3b82f6', line_width=3)
-                fig_l.update_layout(plot_bgcolor='white', title=f"{secilen} Zaman İçindeki Değişimi")
-                st.plotly_chart(fig_l, use_container_width=True)
 
             with t3:  # GIDA DETAY
                 if not gida.empty:
