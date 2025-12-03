@@ -67,7 +67,7 @@ st.markdown("""
         .delta-neg { background: #dcfce7; color: #16a34a; } 
         .delta-neu { background: #f1f5f9; color: #475569; }
 
-        /* ANALİZ KUTUSU (TEXT BLOCK) */
+        /* ANALİZ KUTUSU */
         .analysis-box {
             background: #ffffff; border-left: 6px solid #3b82f6; padding: 30px; border-radius: 12px;
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); font-size: 16px; line-height: 1.7; color: #334155;
@@ -163,7 +163,7 @@ def install_browsers():
 
 
 def migros_gida_botu(cb=None):
-    if cb: cb("🚀 Bağlantı Kuruluyor...")
+    if cb: cb("🚀 Güvenli Bağlantı Başlatılıyor...")
     install_browsers()
     try:
         df = github_excel_oku(EXCEL_DOSYASI, SAYFA_ADI)
@@ -176,47 +176,74 @@ def migros_gida_botu(cb=None):
     veriler = []
     with sync_playwright() as p:
         browser = p.firefox.launch(headless=True)
-        page = browser.new_page()
-        for _, row in takip.iterrows():
-            url = row['URL']
-            if cb: cb(f"📡 Taranıyor: {row.get('Madde adı')[:20]}")
-            fiyat = 0.0
-            try:
-                page.goto(url, timeout=30000);
-                time.sleep(1)
+        # Daha güvenli user-agent
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36")
+        page = context.new_page()
 
-                # ÖNCELİK SIRASI DEĞİŞTİRİLDİ (BUG FIX)
-                # 1. JSON-LD (Meta Veri - En Temiz)
+        total_urun = len(takip)
+        for i, row in takip.iterrows():
+            urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
+            url = row['URL']
+
+            if cb: cb(f"[{i + 1}/{total_urun}] 📡 Taranıyor: {urun_adi}...")
+            fiyat = 0.0
+
+            try:
+                page.goto(url, timeout=60000)
+                # Yavaşlatma: Sayfanın tam oturması için bekleme süresi artırıldı
+                time.sleep(3)
+
+                # 1. JSON-LD (Önce Meta Veri Kontrolü)
                 try:
                     d = json.loads(page.locator("script[type='application/ld+json']").first.inner_text())
                     if "offers" in d: fiyat = float(d["offers"]["price"])
                 except:
                     pass
 
-                # 2. CSS SELECTORS (Senin istediğin özel span EN BAŞTA)
+                # 2. CSS SELECTORS (Senin istediğin sıra ile)
                 if fiyat == 0:
                     selectors = [
-                        "fe-product-price .amount",  # Migros Ana Fiyat Class'ı (Çok Güvenli)
-                        "span:has(span.currency)",
-                        # Senin istediğin: <span ...> 54,95 <span class="currency">TL</span></span>
-                        "div.product-price",  # Alternatif
-                        ".amount",  # Genel Tutar
-                        # "#sale-price"              # BU KALDIRILDI veya EN SONA ATILDI (Hatalı 299 TL çeken buydu)
+                        "span:has(span.currency)",  # ÖNCELİK 1 (Senin Kodun)
+                        "#sale-price",  # ÖNCELİK 2
+                        ".sale-price",
+                        "sm-product-price .amount",
+                        ".product-price",
+                        "fe-product-price .amount",
+                        ".amount"
                     ]
                     for sel in selectors:
-                        if page.locator(sel).count():
+                        if page.locator(sel).count() > 0:
                             txt = page.locator(sel).first.inner_text()
                             val = temizle_fiyat(txt)
-                            if val and val > 0:  # 0'dan büyükse al
+                            if val and val > 0:
                                 fiyat = val
                                 break
+
+                                # 3. REGEX (Son Çare)
+                if fiyat == 0:
+                    try:
+                        body_txt = page.locator("body").inner_text()
+                        bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_txt)
+                        vals = [temizle_fiyat(x) for x in bulunanlar if temizle_fiyat(x)]
+                        if vals: fiyat = vals[0]
+                    except:
+                        pass
+
             except:
                 pass
 
             if fiyat > 0:
+                if cb: cb(f"✅ {urun_adi}: {fiyat} TL")  # Fiyatı yazdır
                 veriler.append({"Tarih": datetime.now().strftime("%Y-%m-%d"), "Zaman": datetime.now().strftime("%H:%M"),
                                 "Kod": row['Kod'], "Madde_Adi": row['Madde adı'], "Fiyat": fiyat,
                                 "Kaynak": "Sanal Market", "URL": url})
+            else:
+                if cb: cb(f"❌ {urun_adi}: Fiyat Bulunamadı")
+
+            # Sakin İlerleme: Her ürün arası bekleme
+            time.sleep(2)
+
         browser.close()
 
     if veriler:
