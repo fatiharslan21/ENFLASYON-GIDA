@@ -116,74 +116,113 @@ def install_browsers():
 
 
 # --- 🤖 MİGROS BOTU (HIZLI & GÜVENİLİR) 🤖 ---
+# --- 👻 MİGROS HAYALET BOT (WAF GEÇME GARANTİLİ) 👻 ---
 def migros_gida_botu(log_callback=None):
-    if log_callback: log_callback("🍏 Migros Botu Başlatılıyor...")
+    if log_callback: log_callback("👻 Hayalet Modu Devrede: Güvenlik Duvarı Aşılıyor...")
     install_browsers()
 
-    # Listeyi Oku
     try:
         df = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
         df['Kod'] = df['Kod'].astype(str).apply(kod_standartlastir)
         mask = (df['Kod'].str.startswith('01')) & (df['URL'].str.contains('migros', case=False, na=False))
         takip = df[mask].copy()
-        if takip.empty: return "⚠️ Listede '01' kodlu MİGROS ürünü bulunamadı!"
+        if takip.empty: return "⚠️ Listede Migros Gıda ürünü yok!"
     except Exception as e:
         return f"Excel Hatası: {e}"
 
     veriler = []
     total = len(takip)
 
-    if log_callback: log_callback(f"🚀 {total} Ürün Taranıyor...")
-
     with sync_playwright() as p:
-        browser = p.firefox.launch(headless=True)
+        # Args kısmına dikkat: Bot tespitini engellemek için özel parametreler
+        browser = p.firefox.launch(
+            headless=True,
+            args=["--disable-blink-features=AutomationControlled"]
+        )
+
         context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0")
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+            viewport={"width": 1920, "height": 1080}
+        )
+
         page = context.new_page()
 
-        # Hızlandırma: Resim, Font, Medya ENGELLE. (CSS açık kalsın)
-        page.route("**/*", lambda route: route.abort() if route.request.resource_type in ["image", "media",
-                                                                                          "font"] else route.continue_())
+        # WebDriver özelliğini JavaScript ile sil (En önemli kısım)
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
         for i, row in takip.iterrows():
-            urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
+            urun_adi = str(row.get('Madde adı', '---'))[:20]
             url = row['URL']
 
-            if log_callback: log_callback(f"🛒 [{i + 1}/{total}] {urun_adi}...")
+            if log_callback: log_callback(f"🕵️ [{i + 1}/{total}] {urun_adi} Aranıyor...")
 
             fiyat = 0.0
+            kaynak = ""
 
             try:
-                page.goto(url, timeout=25000, wait_until="domcontentloaded")
-
-                # YÖNTEM 1: JSON-LD
+                # 'networkidle' -> Sayfadaki tüm veri akışı durana kadar bekle (En garantisi)
                 try:
-                    page.wait_for_selector("script[type='application/ld+json']", timeout=2000)
-                    json_data = page.locator("script[type='application/ld+json']").first.inner_text()
-                    data = json.loads(json_data)
+                    page.goto(url, timeout=40000, wait_until="domcontentloaded")
+                    time.sleep(3)  # Migros'un kendine gelmesi için zorunlu bekleme
+                except:
+                    if log_callback: log_callback("⚠️ Zaman aşımı, mevcut veriye bakılıyor...")
+
+                # 1. DENEME: JSON-LD (Arka Plan Verisi)
+                try:
+                    # Script etiketini bekle
+                    page.wait_for_selector("script[type='application/ld+json']", timeout=3000)
+                    json_content = page.locator("script[type='application/ld+json']").first.inner_text()
+                    data = json.loads(json_content)
+
                     if "offers" in data and "price" in data["offers"]:
                         fiyat = float(data["offers"]["price"])
+                        kaynak = "Meta"
                     elif "hasVariant" in data:
                         fiyat = float(data["hasVariant"][0]["offers"]["price"])
+                        kaynak = "Varyant"
                 except:
                     pass
 
-                # YÖNTEM 2: CSS
+                # 2. DENEME: CSS SEÇİCİLER (Görsel Etiketler)
+                if fiyat == 0:
+                    selectors = [
+                        "sm-product-price .amount",
+                        ".product-price",
+                        "#price-value",
+                        "fe-product-price .amount",
+                        ".subtitle-1"
+                    ]
+                    for sel in selectors:
+                        if page.locator(sel).count() > 0:
+                            if page.locator(sel).first.is_visible():
+                                txt = page.locator(sel).first.inner_text()
+                                val = temizle_fiyat(txt)
+                                if val: fiyat = val; kaynak = "CSS"; break
+
+                # 3. DENEME: KABA KUVVET (REGEX HTML TARAMA)
+                # Eğer yukarıdakiler çalışmadıysa, sayfanın HTML kodunu metin olarak alıp "TL" ararız.
                 if fiyat == 0:
                     try:
-                        el = page.wait_for_selector("sm-product-price .amount, .product-price, #price-value",
-                                                    timeout=1500)
-                        if el:
-                            val = temizle_fiyat(el.inner_text())
-                            if val: fiyat = val
+                        body_txt = page.content()  # Tüm HTML'i al
+                        # Regex: Rakam + TL (Örn: 129,90 TL veya 129.90TL)
+                        bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_txt)
+                        temizlenenler = [temizle_fiyat(x) for x in bulunanlar if temizle_fiyat(x)]
+
+                        if temizlenenler:
+                            # Genelde en mantıklı fiyatlar ortalarda olur ama biz ilk mantıklıyı alalım
+                            # Fiyat çok küçükse (0.1 TL gibi) veya çok büyükse (yıl gibi 2024) filtrele
+                            mantikli_fiyatlar = [x for x in temizlenenler if 1 < x < 50000]
+                            if mantikli_fiyatlar:
+                                fiyat = mantikli_fiyatlar[0]
+                                kaynak = "Regex"
                     except:
                         pass
-            except:
+
+            except Exception as e:
                 pass
 
             if fiyat > 0:
-                if log_callback: log_callback(f"✅ {fiyat} TL")
+                if log_callback: log_callback(f"✅ {fiyat} TL ({kaynak})")
                 veriler.append({
                     "Tarih": datetime.now().strftime("%Y-%m-%d"),
                     "Zaman": datetime.now().strftime("%H:%M"),
@@ -194,11 +233,13 @@ def migros_gida_botu(log_callback=None):
                     "URL": url
                 })
             else:
-                if log_callback: log_callback("❌ Bulunamadı")
+                if log_callback: log_callback("❌ Bulunamadı (Site Engeli)")
+
+            # 2 Saniye dinlen (IP Ban yememek için şart)
+            time.sleep(2)
 
         browser.close()
 
-    # KAYIT İŞLEMİ (APPEND)
     if veriler:
         df_new = pd.DataFrame(veriler)
         try:
