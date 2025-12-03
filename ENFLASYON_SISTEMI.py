@@ -14,7 +14,7 @@ from github import Github
 from io import BytesIO
 
 # --- 1. SAYFA YAPILANDIRMASI ---
-st.set_page_config(page_title="ENFLASYON MONITORU ", page_icon="💎", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="💎", layout="wide", initial_sidebar_state="collapsed")
 
 # --- 🎨 ULTRA PREMIUM UI CSS ---
 st.markdown("""
@@ -184,16 +184,35 @@ def migros_gida_botu(cb=None):
             try:
                 page.goto(url, timeout=30000);
                 time.sleep(1)
+
+                # ÖNCELİK SIRASI DEĞİŞTİRİLDİ (BUG FIX)
+                # 1. JSON-LD (Meta Veri - En Temiz)
                 try:
                     d = json.loads(page.locator("script[type='application/ld+json']").first.inner_text())
                     if "offers" in d: fiyat = float(d["offers"]["price"])
                 except:
                     pass
+
+                # 2. CSS SELECTORS (Senin istediğin özel span EN BAŞTA)
                 if fiyat == 0:
-                    for sel in ["span:has(span.currency)", "#sale-price", ".sale-price", ".amount"]:
-                        if page.locator(sel).count(): fiyat = temizle_fiyat(page.locator(sel).first.inner_text()); break
+                    selectors = [
+                        "fe-product-price .amount",  # Migros Ana Fiyat Class'ı (Çok Güvenli)
+                        "span:has(span.currency)",
+                        # Senin istediğin: <span ...> 54,95 <span class="currency">TL</span></span>
+                        "div.product-price",  # Alternatif
+                        ".amount",  # Genel Tutar
+                        # "#sale-price"              # BU KALDIRILDI veya EN SONA ATILDI (Hatalı 299 TL çeken buydu)
+                    ]
+                    for sel in selectors:
+                        if page.locator(sel).count():
+                            txt = page.locator(sel).first.inner_text()
+                            val = temizle_fiyat(txt)
+                            if val and val > 0:  # 0'dan büyükse al
+                                fiyat = val
+                                break
             except:
                 pass
+
             if fiyat > 0:
                 veriler.append({"Tarih": datetime.now().strftime("%Y-%m-%d"), "Zaman": datetime.now().strftime("%H:%M"),
                                 "Kod": row['Kod'], "Madde_Adi": row['Madde adı'], "Fiyat": fiyat,
@@ -286,21 +305,16 @@ def dashboard_modu():
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # 🔥 YENİ ANALİZ BÖLÜMÜ (ŞELALE YERİNE) 🔥
-
-            # 1. Analiz Verileri
+            # 🔥 ANALİZ BÖLÜMÜ 🔥
             en_cok_artan_grup = df_analiz.groupby('Grup')['Fark'].mean().idxmax()
             en_cok_artan_grup_oran = df_analiz.groupby('Grup')['Fark'].mean().max() * 100
-
             dusukler = df_analiz[df_analiz['Fark'] < 0].sort_values('Fark')
             dusen_var = not dusukler.empty
             en_cok_dusen_isim = dusukler.iloc[0]['Madde adı'] if dusen_var else "Yok"
             en_cok_dusen_oran = abs(dusukler.iloc[0]['Fark'] * 100) if dusen_var else 0
-
             trend_yonu = "YÜKSELİŞ" if genel_enf > 0 else "DÜŞÜŞ"
             trend_renk = "trend-up" if genel_enf > 0 else "trend-down"
 
-            # 2. Metin Bloğu (Dinamik)
             analiz_html = f"""
             <div class="analysis-box">
                 <div class="analysis-title">📊 Piyasa Analiz Raporu</div>
@@ -317,26 +331,19 @@ def dashboard_modu():
             """
 
             col_text, col_chart = st.columns([2, 3], gap="medium")
-
             with col_text:
                 st.markdown(analiz_html, unsafe_allow_html=True)
-
             with col_chart:
-                # Sıcaklık Haritası (Treemap)
                 fig_tree = px.treemap(
-                    df_analiz,
-                    path=[px.Constant("Piyasa Geneli"), 'Grup', 'Madde adı'],
-                    values='Agirlik_2025',
-                    color='Fark',
-                    color_continuous_scale='RdYlGn_r',
-                    title="Enflasyon Sıcaklık Haritası (Kırmızı: Yüksek Artış)"
+                    df_analiz, path=[px.Constant("Piyasa Geneli"), 'Grup', 'Madde adı'], values='Agirlik_2025',
+                    color='Fark', color_continuous_scale='RdYlGn_r', title="Enflasyon Sıcaklık Haritası"
                 )
                 fig_tree.update_layout(margin=dict(t=30, l=0, r=0, b=0), height=380)
                 st.plotly_chart(fig_tree, use_container_width=True)
 
             # SEKMELER
-            tabs = st.tabs(
-                ["🤖 AKILLI ASİSTAN", "🫧 BALONCUKLAR", "🍏 GIDA", "🚀 ZİRVE", "📉 FIRSATLAR", "📑 LİSTE", "🎲 SİMÜLE"])
+            tabs = st.tabs(["🤖 AKILLI ASİSTAN", "🫧 BALONCUKLAR", "🍏 GIDA", "🚀 ZİRVE", "📉 FIRSATLAR (İLK 10)", "📑 LİSTE",
+                            "🎲 SİMÜLE"])
 
             with tabs[0]:  # ASİSTAN
                 st.markdown("##### 🤖 Piyasa Analiz Asistanı")
@@ -348,7 +355,6 @@ def dashboard_modu():
                     sorgu = sorgu_ham.lower()
                     sonuc_urun = df_analiz[df_analiz['Madde adı'].str.lower().str.contains(sorgu, na=False)]
                     target = None
-
                     if not sonuc_urun.empty:
                         if len(sonuc_urun) > 1:
                             st.info(f"Birden fazla sonuç: {', '.join(sonuc_urun['Madde adı'].unique())}. Lütfen seçin:")
@@ -360,34 +366,33 @@ def dashboard_modu():
                         if target is not None:
                             fark = target['Fark'] * 100
                             if fark > 0:
-                                durum_icon = "📈";
-                                durum_text = "ZAMLANDI";
-                                color_style = "#dc2626";
-                                bg_style = "#fef2f2"
-                                msg_extra = f"Genel enflasyon (%{genel_enf:.2f}) üzerinde bir artış."
+                                d_icon = "📈";
+                                d_txt = "ZAMLANDI";
+                                c_sty = "#dc2626";
+                                b_sty = "#fef2f2";
+                                msg = "Dikkat çekici artış."
                             elif fark < 0:
-                                durum_icon = "🎉";
-                                durum_text = "İNDİRİMDE";
-                                color_style = "#16a34a";
-                                bg_style = "#f0fdf4"
-                                msg_extra = "Fiyat düşüşü yakaladınız."
+                                d_icon = "🎉";
+                                d_txt = "İNDİRİMDE";
+                                c_sty = "#16a34a";
+                                b_sty = "#f0fdf4";
+                                msg = "Fiyat düşüşü."
                             else:
-                                durum_icon = "➖";
-                                durum_text = "SABİT";
-                                color_style = "#475569";
-                                bg_style = "#f8fafc"
-                                msg_extra = "Fiyat değişmedi."
+                                d_icon = "➖";
+                                d_txt = "SABİT";
+                                c_sty = "#475569";
+                                b_sty = "#f8fafc";
+                                msg = "Değişim yok."
 
                             st.markdown(f"""
-                                <div style="background-color:{bg_style}; border-left: 5px solid {color_style}; padding: 20px; border-radius: 8px; color: #1e293b; margin-top:20px;">
-                                    <div style="font-size:20px; font-weight:800; color:{color_style}; margin-bottom:10px;">
-                                        {durum_icon} {durum_text} (%{fark:.2f})
+                                <div style="background-color:{b_sty}; border-left: 5px solid {c_sty}; padding: 20px; border-radius: 8px; color: #1e293b; margin-top:20px;">
+                                    <div style="font-size:20px; font-weight:800; color:{c_sty}; margin-bottom:10px;">
+                                        {d_icon} {d_txt} (%{fark:.2f})
                                     </div>
                                     <div style="font-size:16px; line-height:1.5;">
                                         <b>{target['Madde adı']}</b><br>
-                                        Başlangıç: <b>{target[baz]:.2f} TL</b> <span style="color:#cbd5e1">➜</span> Son: <b>{target[son]:.2f} TL</b>
-                                        <br><br>
-                                        <span style="font-size:14px; color:#64748b;">ℹ️ {msg_extra}</span>
+                                        Başlangıç: <b>{target[baz]:.2f} TL</b> ➜ Son: <b>{target[son]:.2f} TL</b><br><br>
+                                        <span style="font-size:14px; color:#64748b;">ℹ️ {msg}</span>
                                     </div>
                                 </div>
                             """, unsafe_allow_html=True)
@@ -423,7 +428,7 @@ def dashboard_modu():
                     Fark=lambda x: x['Fark'].apply(lambda v: f"%{v * 100:.2f}")))
 
             with tabs[4]:  # FIRSAT (İLK 10)
-                low = df_analiz[df_analiz['Fark'] < 0].sort_values('Fark').head(10)  # İLK 10 EKLENDİ
+                low = df_analiz[df_analiz['Fark'] < 0].sort_values('Fark').head(10)
                 if not low.empty:
                     st.table(low[['Madde adı', 'Grup', 'Fark']].assign(
                         Fark=lambda x: x['Fark'].apply(lambda v: f"%{v * 100:.2f}")))
