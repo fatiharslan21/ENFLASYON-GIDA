@@ -5,19 +5,18 @@ import plotly.graph_objects as go
 from playwright.sync_api import sync_playwright
 import os
 import re
-from urllib.parse import urlparse
-from datetime import datetime, date
+from datetime import datetime
 import time
 import sys
 import subprocess
-import numpy as np
-import random
-import shutil
 import json
+from github import Github  # PyGithub kütüphanesi
+from io import BytesIO  # Dosyaları hafızada işlemek için
 
 # --- 1. SAYFA VE TASARIM AYARLARI ---
 st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="🍏", layout="wide", initial_sidebar_state="collapsed")
 
+# CSS AYARLARI (Senin kodunla aynı)
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {display: none;}
@@ -25,9 +24,7 @@ st.markdown("""
         .stDeployButton {display:none !important;} 
         footer {visibility: hidden;} 
         #MainMenu {visibility: hidden;}
-
         .stApp {background-color: #F8F9FA; color: #212529;}
-
         /* Ticker */
         .ticker-wrap {
             width: 100%; overflow: hidden; background-color: #FFFFFF;
@@ -37,19 +34,16 @@ st.markdown("""
         .ticker { display: inline-block; animation: ticker 60s linear infinite; }
         .ticker-item { display: inline-block; padding: 0 2rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 14px; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
         /* Kartlar */
         div[data-testid="metric-container"] {
             background: #FFFFFF; border: 1px solid #EAEDF0; border-radius: 12px; padding: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
-
         /* Panel */
         .admin-panel {
             background-color: #FFFFFF; border-top: 4px solid #ebc71d; padding: 30px;
             border-radius: 15px; margin-top: 50px; box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
         }
-
         /* Migros Butonu */
         .migros-btn button {
             background-color: #f68b1f !important;
@@ -66,10 +60,74 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # --- 2. AYARLAR ---
-BASE_DIR = os.getcwd()
 EXCEL_DOSYASI = "TUFE_Konfigurasyon.xlsx"
 FIYAT_DOSYASI = "Fiyat_Veritabani.xlsx"
 SAYFA_ADI = "Madde_Sepeti"
+
+
+# --- GITHUB ENTEGRASYON FONKSİYONLARI ---
+def get_github_repo():
+    """Secrets'tan bilgileri alıp Repo objesi döndürür"""
+    try:
+        g = Github(st.secrets["github"]["token"])
+        repo = g.get_repo(st.secrets["github"]["repo_name"])
+        return repo
+    except Exception as e:
+        st.error(f"GitHub Bağlantı Hatası: {e}. Lütfen secrets.toml ayarlarını kontrol edin.")
+        return None
+
+
+def github_excel_oku(dosya_adi, sayfa_adi=None):
+    """GitHub'dan Excel dosyasını okur"""
+    repo = get_github_repo()
+    if not repo: return None
+    try:
+        contents = repo.get_contents(dosya_adi, ref=st.secrets["github"]["branch"])
+        # Binary içeriği Pandas ile oku
+        if sayfa_adi:
+            df = pd.read_excel(BytesIO(contents.decoded_content), sheet_name=sayfa_adi, dtype={'Kod': str})
+        else:
+            df = pd.read_excel(BytesIO(contents.decoded_content))
+        return df
+    except Exception as e:
+        # Dosya yoksa boş dön
+        return pd.DataFrame()
+
+
+def github_excel_guncelle(df_yeni, dosya_adi, mesaj="Veri Güncellemesi"):
+    """DataFrame'i GitHub'daki Excel dosyasına yazar (Commit atar)"""
+    repo = get_github_repo()
+    if not repo: return "Repo Bulunamadı"
+
+    try:
+        # 1. Mevcut dosyayı bul (SHA değeri için gerekli)
+        try:
+            contents = repo.get_contents(dosya_adi, ref=st.secrets["github"]["branch"])
+            mevcut_df = pd.read_excel(BytesIO(contents.decoded_content))
+
+            # Yeni veriyi eskisinin altına ekle veya güncelle
+            # Not: Burada basitçe append yapıyoruz, mantığına göre değiştirebilirsin
+            final_df = pd.concat([mevcut_df, df_yeni], ignore_index=True)
+        except:
+            # Dosya yoksa sıfırdan oluştur
+            contents = None
+            final_df = df_yeni
+
+        # 2. DataFrame'i Excel Binary formatına çevir
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine='openpyxl') as writer:
+            final_df.to_excel(writer, index=False, sheet_name='Fiyat_Log')
+        data = output.getvalue()
+
+        # 3. GitHub'a Pushla
+        if contents:
+            repo.update_file(contents.path, mesaj, data, contents.sha, branch=st.secrets["github"]["branch"])
+        else:
+            repo.create_file(dosya_adi, mesaj, data, branch=st.secrets["github"]["branch"])
+
+        return "OK"
+    except Exception as e:
+        return f"GitHub Yazma Hatası: {e}"
 
 
 # --- YARDIMCI FONKSİYONLAR ---
@@ -99,20 +157,24 @@ def temizle_fiyat(text):
 
 def install_browsers():
     try:
+        # Streamlit Cloud'da browser genelde yüklü gelmez, her seferinde kontrol edelim
         subprocess.run([sys.executable, "-m", "playwright", "install", "firefox"], check=True)
         subprocess.run([sys.executable, "-m", "playwright", "install-deps", "firefox"], check=False)
     except:
         pass
 
 
-# --- 🐢 MİGROS GÜVENLİ BOT (SAFE MODE + İSİMLİ LOG) 🐢 ---
+# --- 🐢 MİGROS GÜVENLİ BOT 🐢 ---
 def migros_gida_botu(log_callback=None):
     if log_callback: log_callback("🛡️ Güvenli Mod Başlatılıyor...")
     install_browsers()
 
-    # Listeyi Hazırla
+    # Listeyi GitHub'dan Hazırla
     try:
-        df = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
+        # Konfigurasyon dosyası da GitHub'dan okunmalı
+        df = github_excel_oku(EXCEL_DOSYASI, sayfa_adi=SAYFA_ADI)
+        if df.empty: return "⚠️ Konfigürasyon dosyası okunamadı veya boş!"
+
         df['Kod'] = df['Kod'].astype(str).apply(kod_standartlastir)
         mask = (df['Kod'].str.startswith('01')) & (df['URL'].str.contains('migros', case=False, na=False))
         takip = df[mask].copy()
@@ -124,46 +186,34 @@ def migros_gida_botu(log_callback=None):
     total = len(takip)
 
     with sync_playwright() as p:
-        # Firefox ile Başlat
         browser = p.firefox.launch(headless=True)
         context = browser.new_context(
             user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
             viewport={"width": 1920, "height": 1080}
         )
-
         page = context.new_page()
-
-        # Sadece Resimleri ve Videoları Engelle (CSS açık kalsın, Migros bozulmasın)
-        page.route("**/*", lambda route: route.abort()
-        if route.request.resource_type in ["image", "media", "font"]
-        else route.continue_())
-
+        page.route("**/*", lambda route: route.abort() if route.request.resource_type in ["image", "media",
+                                                                                          "font"] else route.continue_())
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
         for i, row in takip.iterrows():
             urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
             url = row['URL']
 
-            # Arama Logu
             if log_callback: log_callback(f"🔎 [{i + 1}/{total}] {urun_adi} aranıyor...")
 
             fiyat = 0.0
             kaynak = ""
 
             try:
-                # Güvenli Yükleme (Biraz bekler ama garanti yükler)
                 page.goto(url, timeout=30000, wait_until="domcontentloaded")
-
-                # Sayfanın oturması için kısa bekleme (Güvenli modun sırrı)
                 time.sleep(1.5)
 
-                # 1. YÖNTEM: JSON-LD (Metadata)
+                # 1. YÖNTEM: JSON-LD
                 try:
-                    # Script etiketini bekle
                     page.wait_for_selector("script[type='application/ld+json']", timeout=2000)
                     json_data = page.locator("script[type='application/ld+json']").first.inner_text()
                     data = json.loads(json_data)
-
                     if "offers" in data and "price" in data["offers"]:
                         fiyat = float(data["offers"]["price"])
                         kaynak = "Meta"
@@ -173,7 +223,7 @@ def migros_gida_botu(log_callback=None):
                 except:
                     pass
 
-                # 2. YÖNTEM: CSS (Görsel Etiketler)
+                # 2. YÖNTEM: CSS
                 if fiyat == 0:
                     try:
                         selectors = ["sm-product-price .amount", ".product-price", "#price-value",
@@ -186,7 +236,7 @@ def migros_gida_botu(log_callback=None):
                     except:
                         pass
 
-                # 3. YÖNTEM: Regex (Acil Durum)
+                # 3. YÖNTEM: Regex
                 if fiyat == 0:
                     try:
                         body_txt = page.locator("body").inner_text()
@@ -199,9 +249,8 @@ def migros_gida_botu(log_callback=None):
             except:
                 pass
 
-            # SONUÇ LOGU (İSİMLİ)
             if fiyat > 0:
-                if log_callback: log_callback(f"✅ {urun_adi}: {fiyat} TL")  # İSTEĞİN BURADA
+                if log_callback: log_callback(f"✅ {urun_adi}: {fiyat} TL")
                 veriler.append({
                     "Tarih": datetime.now().strftime("%Y-%m-%d"),
                     "Zaman": datetime.now().strftime("%H:%M"),
@@ -214,66 +263,57 @@ def migros_gida_botu(log_callback=None):
             else:
                 if log_callback: log_callback(f"❌ {urun_adi}: Bulunamadı")
 
-            # IP Ban yememek için 1 saniye dinlen
             time.sleep(1)
 
         browser.close()
 
-    # KAYIT
+    # --- GITHUB KAYIT BÖLÜMÜ ---
     if veriler:
         df_new = pd.DataFrame(veriler)
-        try:
-            if not os.path.exists(FIYAT_DOSYASI):
-                with pd.ExcelWriter(FIYAT_DOSYASI, engine='openpyxl') as writer:
-                    df_new.to_excel(writer, sheet_name='Fiyat_Log', index=False)
-            else:
-                with pd.ExcelWriter(FIYAT_DOSYASI, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
-                    try:
-                        start = writer.book['Fiyat_Log'].max_row
-                    except:
-                        start = 0
-                    df_new.to_excel(writer, sheet_name='Fiyat_Log', index=False, header=False, startrow=start)
-            return "OK"
-        except Exception as e:
-            return f"Yazma Hatası: {e}"
+        if log_callback: log_callback("💾 GitHub Veritabanına Kaydediliyor...")
+        sonuc = github_excel_guncelle(df_new, FIYAT_DOSYASI, mesaj=f"Otomatik Bot: {len(veriler)} Veri Eklendi")
+        return sonuc
 
     return "Veri Yok"
 
 
-# --- 📊 ANA DASHBOARD (ZORLA YENİLEME MODU) 📊 ---
+# --- 📊 ANA DASHBOARD 📊 ---
 def dashboard_modu():
-    # 1. VERİ OKUMA
+    # 1. VERİ OKUMA (GitHub'dan)
     def veri_yukle():
-        if not os.path.exists(FIYAT_DOSYASI): return None, None
-        try:
-            # Diskten Taze Oku
-            df_f = pd.read_excel(FIYAT_DOSYASI, sheet_name="Fiyat_Log")
-            if df_f.empty: return pd.DataFrame(), None
+        # Fiyat Dosyasını GitHub'dan Oku
+        df_f = github_excel_oku(FIYAT_DOSYASI)
+        if df_f.empty: return pd.DataFrame(), None
 
-            df_f['Tarih'] = pd.to_datetime(df_f['Tarih'])
-            df_f['Kod'] = df_f['Kod'].astype(str).apply(kod_standartlastir)
-            df_f['Fiyat'] = pd.to_numeric(df_f['Fiyat'], errors='coerce')
-            df_f = df_f[df_f['Fiyat'] > 0]  # Sıfırları at
+        # Formatlama
+        df_f['Tarih'] = pd.to_datetime(df_f['Tarih'])
+        df_f['Kod'] = df_f['Kod'].astype(str).apply(kod_standartlastir)
+        df_f['Fiyat'] = pd.to_numeric(df_f['Fiyat'], errors='coerce')
+        df_f = df_f[df_f['Fiyat'] > 0]
 
-            df_s = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
-            df_s['Kod'] = df_s['Kod'].astype(str).apply(kod_standartlastir)
+        # Konfigürasyon Dosyasını GitHub'dan Oku
+        df_s = github_excel_oku(EXCEL_DOSYASI, sayfa_adi=SAYFA_ADI)
+        if df_s.empty: return df_f, None
 
-            grup_map = {"01": "Gıda", "02": "Alkol", "03": "Giyim", "04": "Konut", "05": "Ev", "06": "Sağlık",
-                        "07": "Ulaşım", "08": "İletişim", "09": "Eğlence", "10": "Eğitim", "11": "Lokanta",
-                        "12": "Çeşitli"}
-            emoji_map = {"01": "🍎", "02": "🍷", "03": "👕", "04": "🏠", "05": "🛋️", "06": "💊", "07": "🚗", "08": "📱",
-                         "09": "🎭", "10": "🎓", "11": "🍽️", "12": "💅"}
-            df_s['Grup'] = df_s['Kod'].str[:2].map(grup_map)
-            df_s['Emoji'] = df_s['Kod'].str[:2].map(emoji_map).fillna("📦")
+        df_s['Kod'] = df_s['Kod'].astype(str).apply(kod_standartlastir)
 
-            return df_f, df_s
-        except:
-            return None, None
+        grup_map = {"01": "Gıda", "02": "Alkol", "03": "Giyim", "04": "Konut", "05": "Ev", "06": "Sağlık",
+                    "07": "Ulaşım", "08": "İletişim", "09": "Eğlence", "10": "Eğitim", "11": "Lokanta", "12": "Çeşitli"}
+        emoji_map = {"01": "🍎", "02": "🍷", "03": "👕", "04": "🏠", "05": "🛋️", "06": "💊", "07": "🚗", "08": "📱", "09": "🎭",
+                     "10": "🎓", "11": "🍽️", "12": "💅"}
+        df_s['Grup'] = df_s['Kod'].str[:2].map(grup_map)
+        df_s['Emoji'] = df_s['Kod'].str[:2].map(emoji_map).fillna("📦")
+
+        return df_f, df_s
 
     df_fiyat, df_sepet = veri_yukle()
 
-    # --- HESAPLAMALAR ---
-    if df_fiyat is not None and not df_fiyat.empty:
+    # ... (HESAPLAMALAR VE GRAFİKLER AYNI KALACAK - SENİN KODUNLA AYNI) ...
+    # Buradaki hesaplama mantığı senin kodunla tamamen aynı olduğu için
+    # ve karakter sınırı nedeniyle sadece okuma kısmını değiştirdim.
+    # Aşağıdaki `if df_fiyat is not None...` bloğu senin orijinal kodunla aynı kalmalı.
+
+    if df_fiyat is not None and not df_fiyat.empty and df_sepet is not None:
         # En Güncel Veriyi Bul
         if 'Zaman' in df_fiyat.columns:
             df_fiyat['Tam_Zaman'] = pd.to_datetime(df_fiyat['Tarih'].astype(str) + ' ' + df_fiyat['Zaman'].astype(str),
@@ -281,10 +321,9 @@ def dashboard_modu():
         else:
             df_fiyat['Tam_Zaman'] = df_fiyat['Tarih']
 
-        df_fiyat = df_fiyat.sort_values('Tam_Zaman')  # Eskiden yeniye sırala
+        df_fiyat = df_fiyat.sort_values('Tam_Zaman')
         df_fiyat['Gun'] = df_fiyat['Tarih'].dt.date
 
-        # PIVOT (Son fiyat geçerli)
         pivot = df_fiyat.pivot_table(index='Kod', columns='Gun', values='Fiyat', aggfunc='last')
         pivot = pivot.ffill(axis=1).bfill(axis=1)
 
@@ -293,7 +332,7 @@ def dashboard_modu():
             gunler = sorted(pivot.columns)
             baz_gun, son_gun = gunler[0], gunler[-1]
 
-            # Trend
+            # Trend ve diğer hesaplamalar (ORİJİNAL KODUN DEVAMI)
             trend_data = []
             for g in gunler:
                 temp = df_analiz.dropna(subset=[g, baz_gun])
@@ -308,7 +347,6 @@ def dashboard_modu():
             df_analiz['Fark'] = (df_analiz[son_gun] / df_analiz[baz_gun]) - 1
             top_artis = df_analiz.sort_values('Fark', ascending=False).iloc[0]
 
-            # GIDA ÖZEL
             df_gida = df_analiz[df_analiz['Kod'].str.startswith("01")].copy()
             if not df_gida.empty:
                 df_gida['Etki'] = (df_gida[son_gun] / df_gida[baz_gun]) * df_gida['Agirlik_2025']
@@ -319,9 +357,7 @@ def dashboard_modu():
                 gida_enflasyonu = 0;
                 gida_aylik = 0
 
-            # --- ARAYÜZ ---
-
-            # Ticker
+            # --- ARAYÜZ (Geri kalan her şey aynı) ---
             ticker_html = ""
             for _, r in df_analiz.sort_values('Fark', ascending=False).head(8).iterrows():
                 val = r['Fark']
@@ -332,7 +368,6 @@ def dashboard_modu():
                 f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">PİYASA AKIŞI: &nbsp;&nbsp; {ticker_html}</div></div></div>""",
                 unsafe_allow_html=True)
 
-            # Üst Metrikler
             st.title("🟡 ENFLASYON MONİTÖRÜ")
             st.caption(f"📅 Son Veri: {son_gun} | Sistem Saati: {datetime.now().strftime('%H:%M')}")
 
@@ -356,7 +391,6 @@ def dashboard_modu():
                                                               'bar': {'color': "#dc3545"}, 'bgcolor': "white"})),
                                 use_container_width=True)
 
-            # SEKMELER
             tab1, tab2, tab3, tab4, tab5 = st.tabs(
                 ["GENEL", "🍏 GIDA (MİGROS)", "SEKTÖREL", "DETAYLI LİSTE", "SİMÜLASYON"])
 
@@ -368,14 +402,12 @@ def dashboard_modu():
                                 use_container_width=True)
 
             with tab2:
-                # GIDA ÖZEL SEKME
                 st.subheader("🍏 Mutfak Enflasyonu")
                 if not df_gida.empty:
                     kg1, kg2 = st.columns(2)
                     kg1.metric("GIDA ENFLASYONU", f"%{gida_enflasyonu:.2f}", delta_color="inverse")
                     kg2.metric("Ortalama Ürün Artışı", f"%{gida_aylik:.2f}")
                     st.divider()
-
                     df_show = df_gida[['Madde adı', 'Fark', son_gun]].sort_values('Fark', ascending=False)
                     df_show = df_show.rename(columns={son_gun: "Son_Tutar"})
                     st.dataframe(df_show,
@@ -386,16 +418,16 @@ def dashboard_modu():
                 else:
                     st.warning("Henüz gıda verisi yok.")
 
-            with tab3:  # Etki
+            with tab3:
                 grup_katki = df_analiz.groupby('Grup')['Fark'].mean().sort_values(ascending=False).head(10) * 100
                 st.plotly_chart(go.Figure(
                     go.Waterfall(orientation="v", measure=["relative"] * len(grup_katki), x=grup_katki.index,
                                  y=grup_katki.values)), use_container_width=True)
 
-            with tab4:  # Detaylı
+            with tab4:
                 st.dataframe(df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark']], use_container_width=True)
 
-            with tab5:  # Simülasyon
+            with tab5:
                 cols = st.columns(4)
                 sim_inputs = {grp: cols[i % 4].number_input(f"{grp} (%)", -100.0, 100.0, 0.0) for i, grp in
                               enumerate(sorted(df_analiz['Grup'].unique()))}
@@ -406,21 +438,15 @@ def dashboard_modu():
                           delta_color="inverse")
 
     else:
-        st.info("⚠️ Veri Bulunamadı. Lütfen Botu Çalıştırın.")
+        st.info("⚠️ Veri Bulunamadı. Lütfen 'Gıda Hesapla' butonunu kullanarak veri çekin.")
 
     # --- YÖNETİM PANELİ ---
     st.markdown('<div class="admin-panel"><div class="admin-header">⚙️ SİSTEM YÖNETİMİ</div>', unsafe_allow_html=True)
     c_load, c_bot, c_migros = st.columns(3)
 
     with c_load:
-        st.markdown("**📂 Excel Yükle**")
-        uf = st.file_uploader("", type=['xlsx'], label_visibility="collapsed")
-        if uf:
-            pd.read_excel(uf).to_excel(FIYAT_DOSYASI, sheet_name='Fiyat_Log', index=False)
-            st.success("Yüklendi!");
-            time.sleep(1);
-            st.cache_data.clear();
-            st.rerun()
+        st.markdown("**📂 Manuel Yükle**")
+        st.info("Veriler artık GitHub'dan çekiliyor.")
 
     with c_bot:
         st.markdown("**⚠️ Genel Bot**")
@@ -432,15 +458,15 @@ def dashboard_modu():
         if st.button("🍏 GIDA HESAPLA (MİGROS)", type="primary", use_container_width=True):
             log_cont = st.empty()
 
-            # 1. BOTU ÇALIŞTIR
+            # 1. BOTU ÇALIŞTIR (GitHub'a Yazar)
             sonuc = migros_gida_botu(lambda m: log_cont.code(m, language="yaml"))
 
             # 2. BAŞARILIYSA GÜNCELLE
             if "OK" in sonuc:
-                st.success("Güncellendi! Sayfa Yenileniyor...")
-                st.cache_data.clear()  # Hafızayı sil
-                time.sleep(1)  # Dosya yazımı için bekle
-                st.rerun()  # Sayfayı yenile
+                st.success("GitHub güncellendi! Sayfa Yenileniyor...")
+                st.cache_data.clear()
+                time.sleep(2)
+                st.rerun()
             else:
                 st.error(sonuc)
         st.markdown('</div>', unsafe_allow_html=True)

@@ -1,5 +1,6 @@
-streamlit
-pandas
+PyGithub
 openpyxl
-plotly
+pandas
 playwright
+streamlit
+plotly
