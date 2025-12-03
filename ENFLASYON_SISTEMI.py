@@ -15,66 +15,34 @@ import random
 import shutil
 import json
 
-# --- 1. SAYFA VE TASARIM AYARLARI ---
-st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="Hz", layout="wide", initial_sidebar_state="collapsed")
+# --- 1. SAYFA AYARLARI ---
+st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="🍏", layout="wide", initial_sidebar_state="collapsed")
 
-# --- CSS (ESKİ HAVALI TASARIM + YENİ MİGROS STİLİ) ---
+# --- CSS ---
 st.markdown("""
     <style>
-        /* Temel Gizlemeler */
         [data-testid="stSidebar"] {display: none;}
         [data-testid="stToolbar"] {visibility: hidden !important;} 
-        [data-testid="stHeader"] {visibility: hidden !important;}
         .stDeployButton {display:none !important;} 
         footer {visibility: hidden;} 
         #MainMenu {visibility: hidden;}
-
         .stApp {background-color: #F8F9FA; color: #212529;}
-
-        /* Ticker (Kayan Yazı) */
-        .ticker-wrap {
-            width: 100%; overflow: hidden; background-color: #FFFFFF;
-            border-bottom: 2px solid #ebc71d; white-space: nowrap;
-            padding: 12px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px;
-        }
-        .ticker { display: inline-block; animation: ticker 60s linear infinite; }
-        .ticker-item { display: inline-block; padding: 0 2rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 14px; }
-        @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        /* Metrik Kartları */
         div[data-testid="metric-container"] {
             background: #FFFFFF; border: 1px solid #EAEDF0; border-radius: 12px; padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
-        div[data-testid="metric-container"]:hover {
-            transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: #ebc71d;
-        }
-
-        /* Alt Yönetim Paneli */
         .admin-panel {
             background-color: #FFFFFF; border-top: 4px solid #ebc71d; padding: 30px;
             border-radius: 15px; margin-top: 50px; box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
         }
-
-        /* Terminal Log Görünümü */
-        .stCodeBlock {
-            border: 2px solid #ebc71d !important;
-            border-radius: 5px;
-        }
-
-        /* Migros Butonu İçin Stil */
         .migros-btn button {
-            background-color: #f68b1f !important;
-            color: white !important;
-            border: none !important;
-        }
-        .migros-btn button:hover {
-            background-color: #d67616 !important;
+            background-color: #f68b1f !important; color: white !important;
+            border: none !important; padding: 10px 20px !important;
         }
     </style>
 """, unsafe_allow_html=True)
 
-# --- 2. AYARLAR ---
+# --- 2. DOSYA TANIMLARI ---
 BASE_DIR = os.getcwd()
 TXT_DOSYASI = "URL VE CSS.txt"
 EXCEL_DOSYASI = "TUFE_Konfigurasyon.xlsx"
@@ -107,128 +75,74 @@ def temizle_fiyat(text):
         return None
 
 
-def sistemi_sifirla():
-    if os.path.exists(FIYAT_DOSYASI):
-        try:
-            shutil.copy(FIYAT_DOSYASI, f"YEDEK_{datetime.now().strftime('%Y%m%d')}.xlsx")
-        except:
-            pass
-        df = pd.DataFrame(columns=["Tarih", "Zaman", "Kod", "Madde_Adi", "Fiyat", "Kaynak", "URL"])
-        with pd.ExcelWriter(FIYAT_DOSYASI, engine='openpyxl') as writer:
-            df.to_excel(writer, sheet_name='Fiyat_Log', index=False)
-        return True
-    return False
-
-
-# --- 🔥 OTOMATİK TARAYICI KURULUMU 🔥 ---
 def install_browsers():
     try:
         subprocess.run([sys.executable, "-m", "playwright", "install", "firefox"], check=True)
         subprocess.run([sys.executable, "-m", "playwright", "install-deps", "firefox"], check=False)
-    except Exception as e:
-        print(f"Browser install warning: {e}")
+    except:
+        pass
 
 
-# --- 🤖 ÖZEL MİGROS GIDA BOTU 🤖 ---
-# --- 🤖 GÜNCELLENMİŞ MİGROS GIDA BOTU (Terminator Modu) 🤖 ---
-# --- 🚀 MİGROS TURBO BOT (GÖRSELSİZ & HIZLI) 🚀 ---
-# --- ⚡ AKILLI TURBO MOD (Resimsiz ama Garantili) ⚡ ---
+# --- 🤖 MİGROS BOTU (DATA APPENDER) 🤖 ---
 def migros_gida_botu(log_callback=None):
-    if log_callback: log_callback("⚡ Akıllı Hız Modu: Görseller Kapalı, Veri Odaklı...")
+    if log_callback: log_callback("⚡ Başlatılıyor...")
     install_browsers()
 
+    # Listeyi Oku
     try:
         df = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
         df['Kod'] = df['Kod'].astype(str).apply(kod_standartlastir)
         mask = (df['Kod'].str.startswith('01')) & (df['URL'].str.contains('migros', case=False, na=False))
         takip = df[mask].copy()
-        if takip.empty: return "⚠️ Listede '01' kodlu MİGROS ürünü bulunamadı!"
+        if takip.empty: return "⚠️ Listede Migros Gıda ürünü yok!"
     except Exception as e:
         return f"Excel Hatası: {e}"
 
     veriler = []
-    total = len(takip)
-
-    if log_callback: log_callback(f"🏎️ {total} Ürün Taranıyor...")
 
     with sync_playwright() as p:
         browser = p.firefox.launch(headless=True)
+        # Hız için görsel engelleme
         context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0"
-        )
-
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0")
         page = context.new_page()
-
-        # --- OPTİMİZASYON AYARI ---
-        # Sadece görselleri, medyayı ve fontları engelliyoruz.
-        # Stylesheet (CSS) açık kalmalı yoksa Migros veriyi oluşturamıyor.
-        page.route("**/*", lambda route: route.abort()
-        if route.request.resource_type in ["image", "media", "font"]
-        else route.continue_())
-
+        page.route("**/*", lambda route: route.abort() if route.request.resource_type in ["image", "media",
+                                                                                          "font"] else route.continue_())
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
+        total = len(takip)
         for i, row in takip.iterrows():
-            urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
+            urun_adi = str(row.get('Madde adı', '---'))[:20]
             url = row['URL']
 
-            if log_callback: log_callback(f"⚡ [{i + 1}/{total}] {urun_adi}...")
+            if log_callback: log_callback(f"🛒 [{i + 1}/{total}] {urun_adi}...")
 
             fiyat = 0.0
-            kaynak = ""
 
             try:
-                # Sayfaya git
-                page.goto(url, timeout=30000, wait_until="domcontentloaded")
-
-                # Sleep YOK. Onun yerine elemanı bekleme var.
-                # JSON verisi veya Fiyat etiketi hangisi önce gelirse onu kapacağız.
-
-                # 1. YÖNTEM: JSON-LD (En Temiz Veri)
+                page.goto(url, timeout=20000, wait_until="domcontentloaded")
+                # Hızlıca JSON kontrolü
                 try:
-                    # Maksimum 3 saniye JSON scriptini bekle (Varsa hemen alır, yoksa hata verir geçer)
-                    page.wait_for_selector("script[type='application/ld+json']", timeout=3000)
                     json_data = page.locator("script[type='application/ld+json']").first.inner_text()
                     data = json.loads(json_data)
-
                     if "offers" in data and "price" in data["offers"]:
                         fiyat = float(data["offers"]["price"])
-                        kaynak = "Meta"
                     elif "hasVariant" in data:
                         fiyat = float(data["hasVariant"][0]["offers"]["price"])
-                        kaynak = "Varyant"
                 except:
-                    pass
-
-                # 2. YÖNTEM: Görsel Seçiciler (Eğer JSON gelmediyse)
-                if fiyat == 0:
+                    # JSON yoksa CSS
                     try:
-                        # Fiyat etiketini bekle (En fazla 2 sn)
-                        # Geldiği an alır, sleep gibi boşuna beklemez.
-                        el = page.wait_for_selector(
-                            "sm-product-price .amount, .product-price, #price-value",
-                            timeout=2000
-                        )
+                        el = page.wait_for_selector("sm-product-price .amount, .product-price, #price-value",
+                                                    timeout=1500)
                         if el:
                             val = temizle_fiyat(el.inner_text())
-                            if val: fiyat = val; kaynak = "CSS"
+                            if val: fiyat = val
                     except:
                         pass
-
-                # 3. YÖNTEM: Regex (Acil Durum)
-                if fiyat == 0:
-                    try:
-                        body_text = page.locator("body").inner_text()
-                        bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_text)
-                        fiyatlar = [temizle_fiyat(x) for x in bulunanlar if temizle_fiyat(x)]
-                        if fiyatlar: fiyat = fiyatlar[0]; kaynak = "Regex"
-                    except:
-                        pass
-
-            except Exception as e:
+            except:
                 pass
 
-            if fiyat and fiyat > 0:
+            if fiyat > 0:
                 if log_callback: log_callback(f"✅ {fiyat} TL")
                 veriler.append({
                     "Tarih": datetime.now().strftime("%Y-%m-%d"),
@@ -236,7 +150,7 @@ def migros_gida_botu(log_callback=None):
                     "Kod": row.get('Kod'),
                     "Madde_Adi": row.get('Madde adı'),
                     "Fiyat": fiyat,
-                    "Kaynak": kaynak,
+                    "Kaynak": "Migros Bot",
                     "URL": url
                 })
             else:
@@ -244,6 +158,7 @@ def migros_gida_botu(log_callback=None):
 
         browser.close()
 
+    # --- VERİTABANINA EKLEME KISMI ---
     if veriler:
         df_new = pd.DataFrame(veriler)
         try:
@@ -251,253 +166,169 @@ def migros_gida_botu(log_callback=None):
                 with pd.ExcelWriter(FIYAT_DOSYASI, engine='openpyxl') as writer:
                     df_new.to_excel(writer, sheet_name='Fiyat_Log', index=False)
             else:
+                # Mevcut dosyanın altına ekle (Append)
                 with pd.ExcelWriter(FIYAT_DOSYASI, engine='openpyxl', mode='a', if_sheet_exists='overlay') as writer:
                     try:
                         start = writer.book['Fiyat_Log'].max_row
                     except:
                         start = 0
                     df_new.to_excel(writer, sheet_name='Fiyat_Log', index=False, header=False, startrow=start)
-            return f"🏁 Tamamlandı! {len(veriler)} fiyat alındı."
+            return "OK"
         except Exception as e:
-            return f"Kayıt Hatası: {e}"
+            return f"Yazma Hatası: {e}"
 
     return "Veri Yok"
 
 
-# --- DASHBOARD MODU ---
-# --- 📊 GÜNCELLENMİŞ DASHBOARD (HAFIZADAN BESLEME MODU) 📊 ---
-def dashboard_modu():
-    # Session State Başlatma
-    if 'data_needs_refresh' not in st.session_state:
-        st.session_state['data_needs_refresh'] = False
+# --- 📊 ANA UYGULAMA 📊 ---
+def main():
+    # --- VERİ OKUMA (CACHE YOK - HER SEFERİNDE DİSKTEN OKUR) ---
+    def get_data():
+        if not os.path.exists(FIYAT_DOSYASI) or not os.path.exists(EXCEL_DOSYASI):
+            return None, None
 
-    # 1. VERİ YÜKLEME FONKSİYONU
-    def veri_yukle():
-        # Sepet Dosyasını Oku (Burası değişmez)
-        if not os.path.exists(EXCEL_DOSYASI): return None, None
         try:
+            # Fiyatlar
+            df_f = pd.read_excel(FIYAT_DOSYASI, sheet_name="Fiyat_Log")
+            if df_f.empty: return None, None
+
+            # Tipler
+            df_f['Tarih'] = pd.to_datetime(df_f['Tarih'])
+            df_f['Kod'] = df_f['Kod'].astype(str).apply(kod_standartlastir)
+            df_f['Fiyat'] = pd.to_numeric(df_f['Fiyat'], errors='coerce')
+            df_f = df_f[df_f['Fiyat'] > 0]
+
+            # Sıralama (En güncel en altta)
+            if 'Zaman' in df_f.columns:
+                df_f['Tam_Zaman'] = pd.to_datetime(df_f['Tarih'].astype(str) + ' ' + df_f['Zaman'].astype(str),
+                                                   errors='coerce')
+                df_f = df_f.sort_values('Tam_Zaman')
+
+            # Sepet
             df_s = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
-            # Gruplandırma ve Emojiler
             df_s['Kod'] = df_s['Kod'].astype(str).apply(kod_standartlastir)
+
+            # Mapping
             grup_map = {"01": "Gıda", "02": "Alkol", "03": "Giyim", "04": "Konut", "05": "Ev", "06": "Sağlık",
                         "07": "Ulaşım", "08": "İletişim", "09": "Eğlence", "10": "Eğitim", "11": "Lokanta",
                         "12": "Çeşitli"}
-            emoji_map = {"01": "🍎", "02": "🍷", "03": "👕", "04": "🏠", "05": "🛋️", "06": "💊", "07": "🚗", "08": "📱",
-                         "09": "🎭", "10": "🎓", "11": "🍽️", "12": "💅"}
             df_s['Grup'] = df_s['Kod'].str[:2].map(grup_map)
-            df_s['Emoji'] = df_s['Kod'].str[:2].map(emoji_map).fillna("📦")
-
-            # --- KRİTİK NOKTA: VERİYİ NEREDEN OKUYACAĞIZ? ---
-            # Eğer 'taze_veri' hafızada varsa DİREKT ONU KULLAN (Diski bekleme)
-            if 'taze_veri' in st.session_state and not st.session_state['taze_veri'].empty:
-                df_f = st.session_state['taze_veri']
-            # Yoksa Diskten Oku
-            elif os.path.exists(FIYAT_DOSYASI):
-                df_f = pd.read_excel(FIYAT_DOSYASI, sheet_name="Fiyat_Log")
-            else:
-                return pd.DataFrame(), None
-
-            # Veri Tiplerini Düzelt
-            if not df_f.empty:
-                df_f['Tarih'] = pd.to_datetime(df_f['Tarih'])
-                df_f['Kod'] = df_f['Kod'].astype(str).apply(kod_standartlastir)
-                df_f['Fiyat'] = pd.to_numeric(df_f['Fiyat'], errors='coerce')
-                df_f = df_f[df_f['Fiyat'] > 0]
 
             return df_f, df_s
-        except Exception as e:
-            st.error(f"Veri Yükleme Hatası: {e}")
+        except:
             return None, None
 
-    # Verileri Çek
-    df_fiyat, df_sepet = veri_yukle()
+    # Veriyi Çek
+    df_fiyat, df_sepet = get_data()
 
-    # --- 2. HESAPLAMA MOTORU ---
+    # --- HESAPLAMALAR ---
+    son_gun = date.today()
+    genel_enflasyon = 0
+    gida_enflasyonu = 0
+    gida_aylik = 0
+    df_gida_show = pd.DataFrame()
+    top_artis = None
+
+    # Eğer veri varsa hesapla
     if df_fiyat is not None and not df_fiyat.empty:
-        # En güncel veriyi almak için sıralama
-        if 'Zaman' in df_fiyat.columns:
-            df_fiyat['Tam_Zaman'] = pd.to_datetime(df_fiyat['Tarih'].astype(str) + ' ' + df_fiyat['Zaman'].astype(str),
-                                                   errors='coerce')
-        else:
-            df_fiyat['Tam_Zaman'] = df_fiyat['Tarih']
-
-        df_fiyat = df_fiyat.sort_values('Tam_Zaman')
         df_fiyat['Gun'] = df_fiyat['Tarih'].dt.date
-
-        # Pivot (Son Fiyatı Al)
+        # Pivot (Günlük Son Fiyat)
         pivot = df_fiyat.pivot_table(index='Kod', columns='Gun', values='Fiyat', aggfunc='last')
         pivot = pivot.ffill(axis=1).bfill(axis=1)
 
         if not pivot.empty:
             df_analiz = pd.merge(df_sepet, pivot, on='Kod', how='left').dropna(subset=['Agirlik_2025'])
-
             gunler = sorted(pivot.columns)
-            baz_gun = gunler[0]
-            son_gun = gunler[-1]
+            baz_gun, son_gun = gunler[0], gunler[-1]
 
-            # Trend ve Enflasyon
-            trend_data = []
-            for g in gunler:
-                temp = df_analiz.dropna(subset=[g, baz_gun])
-                if not temp.empty:
-                    temp['Puan'] = (temp[g] / temp[baz_gun]) * temp['Agirlik_2025']
-                    endeks_degeri = (temp['Puan'].sum() / temp['Agirlik_2025'].sum()) * 100
-                    trend_data.append({"Tarih": g, "TÜFE": endeks_degeri})
+            # 1. Genel Enflasyon
+            df_analiz['Puan'] = (df_analiz[son_gun] / df_analiz[baz_gun]) * df_analiz['Agirlik_2025']
+            son_endeks = (df_analiz['Puan'].sum() / df_analiz['Agirlik_2025'].sum()) * 100
+            genel_enflasyon = (son_endeks / 100 - 1) * 100
 
-            df_trend = pd.DataFrame(trend_data)
-            son_endeks = df_trend['TÜFE'].iloc[-1]
-            genel_enflasyon = ((son_endeks / 100) - 1) * 100
-
+            # 2. Değişimler
             df_analiz['Fark'] = (df_analiz[son_gun] / df_analiz[baz_gun]) - 1
             top_artis = df_analiz.sort_values('Fark', ascending=False).iloc[0]
 
-            # 🍏 GIDA ÖZEL HESAP
+            # 3. Gıda Enflasyonu
             df_gida = df_analiz[df_analiz['Kod'].str.startswith("01")].copy()
             if not df_gida.empty:
-                df_gida['Gida_Endeks_Etkisi'] = (df_gida[son_gun] / df_gida[baz_gun]) * df_gida['Agirlik_2025']
-                gida_endeks = df_gida['Gida_Endeks_Etkisi'].sum() / df_gida['Agirlik_2025'].sum()
+                df_gida['Etki'] = (df_gida[son_gun] / df_gida[baz_gun]) * df_gida['Agirlik_2025']
+                gida_endeks = df_gida['Etki'].sum() / df_gida['Agirlik_2025'].sum()
                 gida_enflasyonu = (gida_endeks - 1) * 100
                 gida_aylik = df_gida['Fark'].mean() * 100
-            else:
-                gida_enflasyonu = 0;
-                gida_aylik = 0
 
-            # --- ARAYÜZ ---
+                # Tablo için hazırlık
+                df_gida_show = df_gida[['Madde adı', 'Fark', son_gun]].sort_values('Fark', ascending=False)
+                df_gida_show = df_gida_show.rename(columns={son_gun: "Son_Tutar"})
 
-            # Ticker
-            ticker_html = ""
-            for _, r in df_analiz.sort_values('Fark', ascending=False).head(5).iterrows():
-                ticker_html += f"<span style='color:#dc3545'>▲ {r['Madde adı']} %{r['Fark'] * 100:.1f}</span> &nbsp;&nbsp; "
-            st.markdown(
-                f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">PİYASA: &nbsp; {ticker_html}</div></div></div>""",
-                unsafe_allow_html=True)
+    # --- ARAYÜZ ---
+    st.title("🟡 ENFLASYON MONİTÖRÜ")
+    st.caption(f"📅 Veri Tarihi: {son_gun} (Oto-Yenileme Aktif)")
 
-            # Başlık ve Zaman Bilgisi
-            st.title("🟡 ENFLASYON MONİTÖRÜ")
+    tab1, tab2 = st.tabs(["GENEL BAKIŞ", "🍏 GIDA ENFLASYONU"])
 
-            # 🔔 GÜNCELLEME UYARISI
-            # Eğer veriyi hafızadan okuduysak kullanıcıya "Veriler Taze" diyelim
-            if 'taze_veri' in st.session_state:
-                st.success(f"✅ VERİLER GÜNCELLENDİ! (Son Fiyat Tarihi: {son_gun})")
-            else:
-                st.caption(f"📅 Veri Tarihi: {son_gun}")
+    with tab1:
+        c1, c2, c3 = st.columns(3)
+        c1.metric("GENEL ENFLASYON", f"%{genel_enflasyon:.2f}")
+        if top_artis is not None:
+            c2.metric("ZAM ŞAMPİYONU", f"{top_artis['Madde adı'][:10]}", f"%{top_artis['Fark'] * 100:.1f}")
+        c3.metric("VERİ DURUMU", "AKTİF", f"{len(df_fiyat) if df_fiyat is not None else 0} Kayıt")
 
-            # SEKMELER
-            tab1, tab2, tab3, tab4, tab5 = st.tabs(
-                ["GENEL BAKIŞ", "🍏 GIDA ENFLASYONU", "SEKTÖREL", "DETAYLI LİSTE", "SİMÜLASYON"])
+    with tab2:
+        st.subheader("🍏 Migros Gıda Endeksi")
+        kg1, kg2 = st.columns(2)
+        kg1.metric("GIDA ENFLASYONU", f"%{gida_enflasyonu:.2f}", delta_color="inverse")
+        kg2.metric("Ortalama Artış", f"%{gida_aylik:.2f}")
 
-            with tab1:
-                c1, c2, c3, c4 = st.columns(4)
-                c1.metric("GENEL ENDEKS", f"{son_endeks:.2f}", "Baz: 100")
-                c2.metric("GENEL ENFLASYON", f"%{genel_enflasyon:.2f}", delta_color="inverse")
-                c3.metric("ZAM ŞAMPİYONU", f"{top_artis['Madde adı'][:10]}..", f"%{top_artis['Fark'] * 100:.1f}",
-                          delta_color="inverse")
-                c4.metric("VERİ SETİ", f"{len(gunler)} Gün", str(son_gun))
-                st.plotly_chart(px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#ebc71d']),
-                                use_container_width=True)
-
-            with tab2:  # 🍏 GIDA TAB
-                st.subheader("🍏 Mutfak Enflasyonu (Migros Endeksi)")
-                if not df_gida.empty:
-                    kg1, kg2, kg3 = st.columns(3)
-                    kg1.metric("GIDA ENFLASYONU", f"%{gida_enflasyonu:.2f}", "Kümülatif", delta_color="inverse")
-                    kg2.metric("Ortalama Ürün Artışı", f"%{gida_aylik:.2f}")
-                    kg3.metric("Takip Edilen Ürün", f"{len(df_gida)} Adet")
-
-                    st.divider()
-                    st.markdown("#### 🥦 Ürün Bazlı Değişimler")
-
-                    df_show = df_gida[['Madde adı', 'Fark', son_gun]].sort_values('Fark', ascending=False)
-                    df_show = df_show.rename(columns={son_gun: "Son_Tutar"})
-
-                    st.dataframe(
-                        df_show,
-                        column_config={
-                            "Fark": st.column_config.ProgressColumn("Değişim", format="%.2f%%", min_value=-0.5,
-                                                                    max_value=0.5),
-                            "Son_Tutar": st.column_config.NumberColumn("Son Fiyat", format="%.2f ₺")
-                        },
-                        hide_index=True, use_container_width=True
-                    )
-                else:
-                    st.warning("Gıda verisi bulunamadı.")
-
-            with tab3:  # Sektörel
-                df_analiz['Grup_Degisim'] = df_analiz.groupby('Grup')['Fark'].transform('mean') * 100
-                grp = df_analiz[['Grup', 'Grup_Degisim']].drop_duplicates().sort_values('Grup_Degisim')
-                st.plotly_chart(go.Figure(go.Bar(y=grp['Grup'], x=grp['Grup_Degisim'], orientation='h',
-                                                 marker=dict(color=grp['Grup_Degisim'], colorscale='RdYlGn_r'))),
-                                use_container_width=True)
-
-            with tab4:  # Detaylı
-                st.dataframe(df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark']], use_container_width=True)
-
-            with tab5:  # Simülasyon
-                st.info("Beklenen zam oranlarını giriniz.")
-                cols = st.columns(4)
-                sim_inputs = {grp: cols[i % 4].number_input(f"{grp} (%)", -100.0, 100.0, 0.0) for i, grp in
-                              enumerate(sorted(df_analiz['Grup'].unique()))}
-                etki = sum(
-                    [(df_analiz[df_analiz['Grup'] == g]['Agirlik_2025'].sum() / df_analiz['Agirlik_2025'].sum()) * v for
-                     g, v in sim_inputs.items()])
-                st.metric("Simüle Enflasyon", f"%{genel_enflasyon + etki:.2f}", f"{etki:+.2f}% Etki",
-                          delta_color="inverse")
-
-    else:
-        st.info("⚠️ Veri Bulunamadı. Lütfen Botu Çalıştırın.")
+        st.divider()
+        if not df_gida_show.empty:
+            st.dataframe(
+                df_gida_show,
+                column_config={
+                    "Fark": st.column_config.ProgressColumn("Değişim", format="%.2f%%", min_value=-0.5, max_value=0.5),
+                    "Son_Tutar": st.column_config.NumberColumn("Son Fiyat", format="%.2f ₺")
+                },
+                hide_index=True, use_container_width=True
+            )
+        else:
+            st.warning("Veri bekleniyor...")
 
     # --- YÖNETİM PANELİ ---
-    st.markdown('<div class="admin-panel"><div class="admin-header">⚙️ SİSTEM YÖNETİMİ</div>', unsafe_allow_html=True)
-    c_load, c_bot, c_migros = st.columns(3)
+    st.markdown('<div class="admin-panel">', unsafe_allow_html=True)
+    c_load, c_bot = st.columns([1, 2])
 
     with c_load:
-        st.markdown("**📂 Excel Yükle**")
-        uf = st.file_uploader("", type=['xlsx'], label_visibility="collapsed")
+        uf = st.file_uploader("Excel Yükle", type=['xlsx'], label_visibility="collapsed")
         if uf:
-            df_uploaded = pd.read_excel(uf)
-            df_uploaded.to_excel(FIYAT_DOSYASI, sheet_name='Fiyat_Log', index=False)
-            # Yüklenen veriyi hafızaya at
-            st.session_state['taze_veri'] = df_uploaded
+            pd.read_excel(uf).to_excel(FIYAT_DOSYASI, sheet_name='Fiyat_Log', index=False)
             st.success("Yüklendi!");
             time.sleep(1);
+            st.cache_data.clear();
             st.rerun()
 
     with c_bot:
-        st.markdown("**⚠️ Genel Bot**")
-        st.button("Tüm Verileri Çek", disabled=True)
-
-    with c_migros:
-        st.markdown("**🍏 Gıda Enflasyonu**")
         st.markdown('<div class="migros-btn">', unsafe_allow_html=True)
-        if st.button("🍏 GIDA HESAPLA (MİGROS)", type="primary", use_container_width=True):
-            log_cont = st.empty()
+        # BUTONA BASINCA OLANLAR
+        if st.button("🍏 GIDA HESAPLA (MİGROS)", use_container_width=True):
+            log_box = st.empty()
 
             # 1. BOTU ÇALIŞTIR
-            sonuc = migros_gida_botu(lambda m: log_cont.code(m, language="yaml"))
+            sonuc = migros_gida_botu(lambda m: log_box.code(m, language="yaml"))
 
-            # 2. BOT BİTTİYSE
-            if "Tamamlandı" in sonuc or "Güncellendi" in sonuc or "Bitti" in sonuc:
-                st.success(sonuc)
-
-                # 3. YENİ DOSYAYI ZORLA OKU (Diskten)
-                # Bot dosyayı kaydetti, şimdi onu hemen okuyup hafızaya atıyoruz.
-                try:
-                    df_yeni = pd.read_excel(FIYAT_DOSYASI, sheet_name="Fiyat_Log")
-
-                    # 4. STREAMLIT HAFIZASINA ENJEKTE ET
-                    st.session_state['taze_veri'] = df_yeni
-
-                    # 5. SAYFAYI YENİLE
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"Veri Yenileme Hatası: {e}")
+            # 2. BAŞARILIYSA ZORLA YENİLE
+            if "OK" in sonuc:
+                st.success("Veritabanı Güncellendi! Sayfa Yenileniyor...")
+                # BU İKİ SATIR HAYAT KURTARIR:
+                st.cache_data.clear()  # 1. Hafızayı sil
+                time.sleep(1)  # 2. Dosya yazılsın diye bekle
+                st.rerun()  # 3. Sayfayı yeniden başlat
             else:
                 st.error(sonuc)
         st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="signature">Fatih Arslan Tarafından yapılmıştır</div>', unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
-    dashboard_modu()
+    main()
