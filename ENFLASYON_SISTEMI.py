@@ -14,90 +14,118 @@ from github import Github
 from io import BytesIO
 
 # --- 1. SAYFA VE TASARIM AYARLARI ---
-st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="💸", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="PRO ENFLASYON TERMİNALİ", page_icon="📈", layout="wide",
+                   initial_sidebar_state="collapsed")
 
-# CSS AYARLARI (ULTRA ŞOV MODU)
+# --- ULTRA ŞOV CSS (DARK FINTECH THEME) ---
 st.markdown("""
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@400;600;800&display=swap');
 
+        /* GENEL SAYFA YAPISI */
+        .stApp {
+            background: radial-gradient(circle at 10% 20%, rgb(15, 23, 42) 0%, rgb(0, 0, 0) 90%);
+            color: #e2e8f0;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        /* GİZLEME */
         [data-testid="stSidebar"] {display: none;}
         [data-testid="stToolbar"] {visibility: hidden !important;} 
         .stDeployButton {display:none !important;} 
         footer {visibility: hidden;} 
         #MainMenu {visibility: hidden;}
 
-        .stApp {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            font-family: 'Roboto', sans-serif;
-            color: #2c3e50;
-        }
-
-        /* Ticker - SİYAH VE MODERN */
+        /* TICKER (BORSA BANDI) */
         .ticker-wrap {
-            width: 100%; overflow: hidden; background-color: #000000;
-            color: #00ff00; border-bottom: 2px solid #ebc71d; white-space: nowrap;
-            padding: 12px 0; box-shadow: 0 10px 20px rgba(0,0,0,0.3); margin-bottom: 25px;
+            width: 100%; overflow: hidden; 
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid #334155;
+            border-bottom: 1px solid #334155;
+            white-space: nowrap;
+            padding: 10px 0; margin-bottom: 20px;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
         }
-        .ticker { display: inline-block; animation: ticker 50s linear infinite; }
+        .ticker { display: inline-block; animation: ticker 40s linear infinite; }
         .ticker-item { 
-            display: inline-block; padding: 0 2rem; 
-            font-family: 'Courier New', monospace; font-weight: 700; font-size: 16px; 
-            letter-spacing: 1px;
+            display: inline-block; padding: 0 3rem; 
+            font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 14px; 
+            color: #64748b;
         }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* Kartlar - Glassmorphism & Hover */
-        div[data-testid="metric-container"] {
-            background: rgba(255, 255, 255, 0.85); 
+        /* ÖZEL METRİK KARTLARI (NEON GLASS) */
+        .custom-card {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 16px; padding: 25px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        div[data-testid="metric-container"]:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-            border-color: #ebc71d;
-        }
-
-        /* Panel - Kontrol Merkezi */
-        .admin-panel {
-            background: #ffffff; border-top: 5px solid #2ecc71; padding: 40px;
-            border-radius: 24px; margin-top: 60px; 
-            box-shadow: 0 -15px 50px rgba(0,0,0,0.05);
+            border-radius: 12px;
+            padding: 20px;
             text-align: center;
-        }
-
-        /* DEV Buton */
-        .big-btn button {
-            background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%) !important;
-            color: white !important;
-            border: none !important;
-            height: 75px;
-            font-size: 24px !important;
-            font-weight: 800 !important;
-            border-radius: 50px !important;
-            box-shadow: 0 10px 25px rgba(56, 239, 125, 0.4);
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
         }
-        .big-btn button:hover {
-            box-shadow: 0 20px 40px rgba(56, 239, 125, 0.6);
-            transform: translateY(-3px);
-            background: linear-gradient(90deg, #38ef7d 0%, #11998e 100%) !important;
+        .custom-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, #00f260, transparent);
+            transform: translateX(-100%); transition: 0.5s;
+        }
+        .custom-card:hover::before { transform: translateX(100%); }
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 242, 96, 0.15);
+            border-color: #00f260;
+        }
+        .card-title { font-size: 14px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+        .card-value { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 800; color: #f8fafc; }
+        .card-sub { font-size: 12px; color: #64748b; margin-top: 5px; }
+
+        /* RENKLİ DEĞERLER */
+        .val-up { color: #00f260; text-shadow: 0 0 10px rgba(0, 242, 96, 0.4); }
+        .val-down { color: #ff0055; text-shadow: 0 0 10px rgba(255, 0, 85, 0.4); }
+        .val-gold { color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.4); }
+
+        /* BAŞLIK */
+        .main-header {
+            font-size: 40px; font-weight: 900; text-align: center;
+            background: linear-gradient(to right, #ffffff, #94a3b8);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 5px; letter-spacing: -1px;
+        }
+        .sub-header { text-align: center; color: #64748b; font-family: 'JetBrains Mono', monospace; font-size: 12px; margin-bottom: 30px; }
+
+        /* BUTON (CYBERPUNK) */
+        .cyber-btn button {
+            background: transparent !important;
+            border: 1px solid #00f260 !important;
+            color: #00f260 !important;
+            font-family: 'JetBrains Mono', monospace !important;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: bold;
+            height: 60px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 242, 96, 0.2);
+        }
+        .cyber-btn button:hover {
+            background: #00f260 !important;
+            color: #000 !important;
+            box-shadow: 0 0 25px rgba(0, 242, 96, 0.6);
         }
 
-        /* Başlık Stili */
-        .main-title {
-            font-size: 3rem; font-weight: 900; 
-            background: -webkit-linear-gradient(#1e3c72, #2a5298);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        /* TABLOLAR */
+        .stDataFrame { border: 1px solid #334155; border-radius: 8px; }
+
+        /* TABS */
+        .stTabs [data-baseweb="tab-list"] { gap: 20px; border-bottom: 1px solid #334155; }
+        .stTabs [data-baseweb="tab"] {
+            height: 50px; white-space: pre-wrap; background-color: transparent; border-radius: 4px 4px 0 0; gap: 1px; padding-top: 10px; padding-bottom: 10px; color: #94a3b8;
         }
+        .stTabs [aria-selected="true"] { background-color: rgba(255,255,255,0.05); color: #00f260; border-bottom: 2px solid #00f260; }
+
     </style>
 """, unsafe_allow_html=True)
 
@@ -140,19 +168,16 @@ def github_excel_guncelle(df_yeni, dosya_adi, mesaj="Veri Güncellemesi"):
             contents = repo.get_contents(dosya_adi, ref=st.secrets["github"]["branch"])
             mevcut_df = pd.read_excel(BytesIO(contents.decoded_content))
 
-            # --- AKILLI KAYIT SİSTEMİ (DUPLICATE ENGELLEME) ---
-            # Yeni gelen verilerin tarih ve kodunu al
-            yeni_tarih = df_yeni['Tarih'].iloc[0]  # Hepsi aynı gün zaten
-
-            # Mevcut veri setinden BUGÜNÜN verilerini temizle (Aynı kodlu olanları)
-            # Mantık: Eğer bugün aynı kodla veri varsa, eskisi silinir, yenisi eklenir (update mantığı)
+            # --- AKILLI KAYIT (GÜN İÇİNDE GÜNCELLEME) ---
+            # Aynı gün ve aynı koda sahip veri varsa eskisi silinir, yenisi yazılır.
+            # Böylece veri seti şişmez.
+            yeni_tarih = df_yeni['Tarih'].iloc[0]
             mask_silinecek = (mevcut_df['Tarih'].astype(str) == str(yeni_tarih)) & (
                 mevcut_df['Kod'].isin(df_yeni['Kod']))
             mevcut_df = mevcut_df[~mask_silinecek]
 
-            # Şimdi birleştir
             final_df = pd.concat([mevcut_df, df_yeni], ignore_index=True)
-            # --------------------------------------------------
+            # --------------------------------------------
 
         except:
             contents = None
@@ -207,19 +232,19 @@ def install_browsers():
 
 # --- 🐢 GÜVENLİ BOT (SAFE MODE) 🐢 ---
 def migros_gida_botu(log_callback=None):
-    if log_callback: log_callback("🛡️ Güvenli Mod Başlatılıyor...")
+    if log_callback: log_callback("⚡ BAĞLANTI KURULUYOR...")
     install_browsers()
 
     try:
         df = github_excel_oku(EXCEL_DOSYASI, sayfa_adi=SAYFA_ADI)
-        if df.empty: return "⚠️ Konfigürasyon dosyası okunamadı veya boş!"
+        if df.empty: return "⚠️ Konfigürasyon Hatası"
 
         df['Kod'] = df['Kod'].astype(str).apply(kod_standartlastir)
         mask = (df['Kod'].str.startswith('01')) & (df['URL'].str.contains('migros', case=False, na=False))
         takip = df[mask].copy()
-        if takip.empty: return "⚠️ Listede takip edilecek ürün yok!"
+        if takip.empty: return "⚠️ Ürün Listesi Boş"
     except Exception as e:
-        return f"Excel Hatası: {e}"
+        return f"Hata: {e}"
 
     veriler = []
     total = len(takip)
@@ -239,16 +264,16 @@ def migros_gida_botu(log_callback=None):
             urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
             url = row['URL']
 
-            if log_callback: log_callback(f"🔎 [{i + 1}/{total}] {urun_adi} aranıyor...")
+            if log_callback: log_callback(f"SCANNING [{i + 1}/{total}] >> {urun_adi}")
             fiyat = 0.0
 
             try:
                 page.goto(url, timeout=30000, wait_until="domcontentloaded")
-                time.sleep(1.5)
+                time.sleep(1.0)  # Biraz daha hızlı
 
                 # 1. YÖNTEM: JSON-LD
                 try:
-                    page.wait_for_selector("script[type='application/ld+json']", timeout=2000)
+                    page.wait_for_selector("script[type='application/ld+json']", timeout=1500)
                     json_data = page.locator("script[type='application/ld+json']").first.inner_text()
                     data = json.loads(json_data)
                     if "offers" in data and "price" in data["offers"]:
@@ -262,8 +287,7 @@ def migros_gida_botu(log_callback=None):
                 if fiyat == 0:
                     try:
                         selectors = ["span:has(span.currency)", "#sale-price", ".sale-price",
-                                     "sm-product-price .amount", ".product-price", "fe-product-price .amount",
-                                     ".amount"]
+                                     "sm-product-price .amount", ".product-price", ".amount"]
                         for sel in selectors:
                             if page.locator(sel).count() > 0:
                                 txt = page.locator(sel).first.inner_text()
@@ -285,7 +309,6 @@ def migros_gida_botu(log_callback=None):
                 pass
 
             if fiyat > 0:
-                if log_callback: log_callback(f"✅ {urun_adi}: {fiyat} TL")
                 veriler.append({
                     "Tarih": datetime.now().strftime("%Y-%m-%d"),
                     "Zaman": datetime.now().strftime("%H:%M"),
@@ -295,16 +318,13 @@ def migros_gida_botu(log_callback=None):
                     "Kaynak": "Sanal Market",
                     "URL": url
                 })
-            else:
-                if log_callback: log_callback(f"❌ {urun_adi}: Bulunamadı")
-
-            time.sleep(1)
+            time.sleep(0.5)
         browser.close()
 
     if veriler:
         df_new = pd.DataFrame(veriler)
-        if log_callback: log_callback("💾 Veritabanına Güncellenerek Kaydediliyor...")
-        sonuc = github_excel_guncelle(df_new, FIYAT_DOSYASI, mesaj=f"Otomatik Bot: {len(veriler)} Veri Güncellendi")
+        if log_callback: log_callback("💾 VERİTABANI GÜNCELLENİYOR...")
+        sonuc = github_excel_guncelle(df_new, FIYAT_DOSYASI, mesaj=f"Terminal Update: {len(veriler)} Items")
         return sonuc
 
     return "Veri Yok"
@@ -328,8 +348,8 @@ def dashboard_modu():
         df_s['Kod'] = df_s['Kod'].astype(str).apply(kod_standartlastir)
         grup_map = {"01": "Gıda", "02": "Alkol", "03": "Giyim", "04": "Konut", "05": "Ev", "06": "Sağlık",
                     "07": "Ulaşım", "08": "İletişim", "09": "Eğlence", "10": "Eğitim", "11": "Lokanta", "12": "Çeşitli"}
-        emoji_map = {"01": "🍎", "02": "🍷", "03": "👕", "04": "🏠", "05": "🛋️", "06": "💊", "07": "🚗", "08": "📱", "09": "🎭",
-                     "10": "🎓", "11": "🍽️", "12": "💅"}
+        emoji_map = {"01": "🍔", "02": "🍷", "03": "👔", "04": "🏠", "05": "🛋️", "06": "💊", "07": "🚗", "08": "📱", "09": "🎭",
+                     "10": "🎓", "11": "🍽️", "12": "💎"}
         df_s['Grup'] = df_s['Kod'].str[:2].map(grup_map)
         df_s['Emoji'] = df_s['Kod'].str[:2].map(emoji_map).fillna("📦")
         return df_f, df_s
@@ -379,122 +399,193 @@ def dashboard_modu():
                 gida_enflasyonu = 0;
                 gida_aylik = 0
 
-            # --- ARAYÜZ ---
+            # --- ARAYÜZ (ŞOV ZAMANI) ---
 
-            # Ticker (Siyah Arkaplan)
+            # 1. TICKER
             ticker_html = ""
-            for _, r in df_analiz.sort_values('Fark', ascending=False).head(10).iterrows():
-                val = r['Fark']
-                color = "#ff4d4d" if val > 0 else "#2ecc71" if val < 0 else "#ffffff"  # Kırmızı artış, Yeşil düşüş
-                symbol = "▲" if val > 0 else "▼" if val < 0 else "•"
-                ticker_html += f"<span style='color:{color}'>{symbol} {r['Madde adı']} %{val * 100:.1f}</span> &nbsp;&nbsp;&nbsp;&nbsp; "
+            for _, r in df_analiz.sort_values('Fark', ascending=False).head(12).iterrows():
+                val = r['Fark'] * 100
+                color = "#00f260" if val < 0 else "#ff0055" if val > 0 else "#94a3b8"
+                symbol = "▼" if val < 0 else "▲" if val > 0 else "•"
+                ticker_html += f"<span style='color:{color}'>{r['Madde adı']} {symbol} %{abs(val):.1f}</span> &nbsp;|&nbsp; "
             st.markdown(
-                f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">CANLI PİYASA: &nbsp;&nbsp; {ticker_html}</div></div></div>""",
+                f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">{ticker_html}</div></div></div>""",
                 unsafe_allow_html=True)
 
-            st.markdown(f'<div class="main-title">ENFLASYON MONİTÖRÜ</div>', unsafe_allow_html=True)
-            st.caption(f"📅 Son Veri: {son_gun} | Sistem Saati: {datetime.now().strftime('%H:%M')}")
+            # 2. HEADER
+            st.markdown('<div class="main-header">ENFLASYON TERMİNALİ v3.0</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="sub-header">SYSTEM ONLINE | DATASET: {son_gun} | SERVER TIME: {datetime.now().strftime("%H:%M:%S")}</div>',
+                unsafe_allow_html=True)
 
-            # Metricler
-            c1, c2, c3, c4 = st.columns(4)
-            c1.metric("GENEL ENDEKS", f"{son_endeks:.2f}", "Baz: 100")
-            c2.metric("GENEL ENFLASYON", f"%{genel_enflasyon:.2f}", delta_color="inverse")
-            c3.metric("ZAM ŞAMPİYONU", f"{top_artis['Madde adı'][:15]}..", f"%{top_artis['Fark'] * 100:.1f}",
-                      delta_color="inverse")
-            c4.metric("VERİ SETİ", f"{len(gunler)} Gün", str(son_gun))
+            # 3. METRIK KARTLARI (CUSTOM HTML)
+            col1, col2, col3, col4 = st.columns(4)
 
-            st.markdown("---")
+            with col1:
+                st.markdown(f"""
+                <div class="custom-card">
+                    <div class="card-title">Genel Endeks</div>
+                    <div class="card-value val-gold">{son_endeks:.2f}</div>
+                    <div class="card-sub">Baz: 100 Puan</div>
+                </div>
+                """, unsafe_allow_html=True)
 
-            # Ana Grafikler
+            with col2:
+                renk = "val-down" if genel_enflasyon > 0 else "val-up"
+                st.markdown(f"""
+                <div class="custom-card">
+                    <div class="card-title">Enflasyon</div>
+                    <div class="card-value {renk}">%{genel_enflasyon:.2f}</div>
+                    <div class="card-sub">Kümülatif Değişim</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            with col3:
+                st.markdown(f"""
+                <div class="custom-card">
+                    <div class="card-title">Gıda Şoku</div>
+                    <div class="card-value val-down">%{gida_enflasyonu:.2f}</div>
+                    <div class="card-sub">Mutfak Enflasyonu</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            with col4:
+                st.markdown(f"""
+                <div class="custom-card">
+                    <div class="card-title">Risk Lideri</div>
+                    <div class="card-value val-down" style="font-size:20px; padding-top:8px;">{top_artis['Madde adı'][:15]}</div>
+                    <div class="card-sub">Artış: %{top_artis['Fark'] * 100:.1f}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown("<br>", unsafe_allow_html=True)
+
+            # 4. ANA GRAFİKLER (DARK PLOTLY)
             c_left, c_right = st.columns([2, 1])
             with c_left:
-                fig_area = px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#3498db'])
+                fig_area = px.area(df_trend, x='Tarih', y='TÜFE', template='plotly_dark')
+                fig_area.update_traces(line_color='#00f260', fill='tozeroy', fillcolor='rgba(0, 242, 96, 0.1)')
                 fig_area.update_layout(
-                    title="Enflasyon Trendi",
-                    margin=dict(l=0, r=0, t=40, b=0),
-                    paper_bgcolor='rgba(0,0,0,0)',
-                    plot_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='#2c3e50')
+                    title={'text': "📈 ENDEKS TRENDİ", 'font': {'size': 16, 'color': '#94a3b8'}},
+                    margin=dict(l=0, r=0, t=40, b=0), paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+                    xaxis=dict(showgrid=False), yaxis=dict(showgrid=True, gridcolor='rgba(255,255,255,0.1)')
                 )
                 st.plotly_chart(fig_area, use_container_width=True)
+
             with c_right:
                 val = min(max(0, abs(genel_enflasyon)), 50)
-                fig_gauge = go.Figure(go.Indicator(mode="gauge+number", value=val,
-                                                   gauge={'axis': {'range': [None, 50]}, 'bar': {'color': "#e74c3c"},
-                                                          'bgcolor': "white"}))
-                fig_gauge.update_layout(margin=dict(l=20, r=20, t=20, b=20), height=250, paper_bgcolor='rgba(0,0,0,0)')
+                fig_gauge = go.Figure(go.Indicator(
+                    mode="gauge+number", value=val,
+                    number={'font': {'color': '#e2e8f0'}},
+                    gauge={
+                        'axis': {'range': [None, 50], 'tickcolor': "#94a3b8"},
+                        'bar': {'color': "#ff0055"},
+                        'bgcolor': "rgba(255,255,255,0.1)",
+                        'bordercolor': "rgba(255,255,255,0.2)"
+                    }
+                ))
+                fig_gauge.update_layout(
+                    title={'text': "🔥 ISINMA GÖSTERGESİ", 'font': {'size': 16, 'color': '#94a3b8'}},
+                    margin=dict(l=20, r=20, t=60, b=20), height=300,
+                    template='plotly_dark', paper_bgcolor='rgba(0,0,0,0)'
+                )
                 st.plotly_chart(fig_gauge, use_container_width=True)
 
-            # Sekmeler
+            # 5. TABLAR
             tab1, tab2, tab3, tab4, tab5 = st.tabs(
-                ["GENEL BAKIŞ", "🍏 GIDA ENFLASYONU", "SEKTÖRLER", "DETAYLI ANALİZ & EXCEL", "SİMÜLASYON"])
+                ["📊 SEKTÖRLER", "🍏 GIDA DETAY", "📁 VERİ ANALİZİ", "🤖 BOT KONTROL", "🎲 SİMÜLASYON"])
 
             with tab1:
                 df_analiz['Grup_Degisim'] = df_analiz.groupby('Grup')['Fark'].transform('mean') * 100
                 grp = df_analiz[['Grup', 'Grup_Degisim']].drop_duplicates().sort_values('Grup_Degisim')
-                st.plotly_chart(go.Figure(go.Bar(y=grp['Grup'], x=grp['Grup_Degisim'], orientation='h',
-                                                 marker=dict(color=grp['Grup_Degisim'], colorscale='RdYlGn_r'))),
-                                use_container_width=True)
+                fig_bar = go.Figure(go.Bar(
+                    y=grp['Grup'], x=grp['Grup_Degisim'], orientation='h',
+                    marker=dict(color=grp['Grup_Degisim'], colorscale='Redor_r', showscale=False)
+                ))
+                fig_bar.update_layout(template='plotly_dark', paper_bgcolor='rgba(0,0,0,0)',
+                                      plot_bgcolor='rgba(0,0,0,0)', margin=dict(t=0, b=0))
+                st.plotly_chart(fig_bar, use_container_width=True)
 
             with tab2:
-                st.subheader("🍏 Mutfak Enflasyonu (Sanal Market Verisi)")
                 if not df_gida.empty:
-                    kg1, kg2 = st.columns(2)
-                    kg1.metric("GIDA ENFLASYONU", f"%{gida_enflasyonu:.2f}", delta_color="inverse")
-                    kg2.metric("Ortalama Ürün Artışı", f"%{gida_aylik:.2f}")
-                    st.divider()
+                    col_baz_str = str(baz_gun)
+                    col_son_str = str(son_gun)
 
-                    df_show = df_gida[['Madde adı', 'Fark', son_gun]].sort_values('Fark', ascending=False)
-                    df_show = df_show.rename(columns={son_gun: "Son_Tutar"})
-                    st.dataframe(df_show, column_config={
-                        "Fark": st.column_config.ProgressColumn("Değişim", format="%.2f%%", min_value=-0.5,
-                                                                max_value=0.5),
-                        "Son_Tutar": st.column_config.NumberColumn("Son Fiyat", format="%.2f ₺")
-                    }, hide_index=True, use_container_width=True)
+                    df_gida_show = df_gida[['Madde adı', 'Fark', baz_gun, son_gun]].sort_values('Fark', ascending=False)
+                    df_gida_show = df_gida_show.rename(columns={baz_gun: col_baz_str, son_gun: col_son_str})
+
+                    st.dataframe(
+                        df_gida_show,
+                        column_config={
+                            "Fark": st.column_config.LineChartColumn("Trend Analizi", y_min=-0.5, y_max=0.5),
+                            col_baz_str: st.column_config.NumberColumn("Başlangıç", format="%.2f ₺"),
+                            col_son_str: st.column_config.NumberColumn("Son Durum", format="%.2f ₺"),
+                            "Madde adı": st.column_config.TextColumn("Ürün", width="medium")
+                        },
+                        use_container_width=True, height=500
+                    )
                 else:
-                    st.warning("Henüz gıda verisi yok.")
+                    st.warning("Veri bekleniyor...")
 
-            with tab3:
-                grup_katki = df_analiz.groupby('Grup')['Fark'].mean().sort_values(ascending=False).head(10) * 100
-                st.plotly_chart(go.Figure(
-                    go.Waterfall(orientation="v", measure=["relative"] * len(grup_katki), x=grup_katki.index,
-                                 y=grup_katki.values)), use_container_width=True)
-
-            with tab4:  # Excel İndirme ve Gelişmiş Liste
+            with tab3:  # Excel & Full Liste
                 c_dl_1, c_dl_2 = st.columns([3, 1])
-                with c_dl_1:
-                    st.subheader("📊 Detaylı Fiyat Analizi")
+                with c_dl_1: st.info("Tüm veritabanı analizi ve Excel dökümü.")
                 with c_dl_2:
                     output = BytesIO()
                     with pd.ExcelWriter(output, engine='openpyxl') as writer:
                         df_analiz.to_excel(writer, index=False, sheet_name='Analiz')
-
-                    st.download_button(
-                        label="📥 Excel Olarak İndir",
-                        data=output.getvalue(),
-                        file_name=f"Enflasyon_Analiz_{son_gun}.xlsx",
-                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True,
-                        type="secondary"
-                    )
+                    st.download_button("📥 RAPORU İNDİR", data=output.getvalue(),
+                                       file_name=f"Enflasyon_Rapor_{son_gun}.xlsx", use_container_width=True)
 
                 col_baz_str = str(baz_gun)
                 col_son_str = str(son_gun)
-
-                df_show_tab4 = df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark', baz_gun, son_gun]].copy()
-                df_show_tab4 = df_show_tab4.rename(columns={baz_gun: col_baz_str, son_gun: col_son_str})
+                df_show_tab3 = df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark', baz_gun, son_gun]].copy()
+                df_show_tab3 = df_show_tab3.rename(columns={baz_gun: col_baz_str, son_gun: col_son_str})
 
                 st.dataframe(
-                    df_show_tab4,
+                    df_show_tab3,
                     column_config={
-                        "Fark": st.column_config.LineChartColumn("Değişim Trendi", y_min=-0.5, y_max=0.5),
-                        # Burası LineChart oldu
-                        col_baz_str: st.column_config.NumberColumn(f"Baz ({col_baz_str})", format="%.2f ₺"),
-                        col_son_str: st.column_config.NumberColumn(f"Son ({col_son_str})", format="%.2f ₺"),
+                        "Fark": st.column_config.LineChartColumn("Trend", y_min=-0.5, y_max=0.5),
+                        col_baz_str: st.column_config.NumberColumn("Baz Fiyat", format="%.2f ₺"),
+                        col_son_str: st.column_config.NumberColumn("Son Fiyat", format="%.2f ₺")
                     },
-                    use_container_width=True,
-                    height=500
+                    use_container_width=True, height=600
                 )
+
+            with tab4:  # BOT KONTROL (Admin Panelini buraya aldım, daha temiz)
+                st.markdown('<div class="admin-panel">', unsafe_allow_html=True)
+                c_bot, c_log = st.columns([1, 2])
+
+                with c_bot:
+                    st.markdown("### 🚀 SİSTEM KONTROL")
+                    st.markdown('<div class="cyber-btn">', unsafe_allow_html=True)
+                    if st.button("TERMİNALİ BAŞLAT", key="bot_start", use_container_width=True):
+                        log_cont = st.empty()
+                        progress_text = "Veri akışı başlatılıyor..."
+                        my_bar = st.progress(0, text=progress_text)
+
+                        def bot_logger(msg):
+                            log_cont.code(f">_ {msg}", language="bash")
+                            try:
+                                my_bar.progress(50, text="Processing...")
+                            except:
+                                pass
+
+                        sonuc = migros_gida_botu(bot_logger)
+                        my_bar.progress(100, text="Tamamlandı!")
+
+                        if "OK" in sonuc:
+                            st.success("SYSTEM UPDATED SUCCESSFULLY")
+                            time.sleep(2)
+                            st.rerun()
+                        else:
+                            st.error(sonuc)
+                    st.markdown('</div>', unsafe_allow_html=True)
+
+                with c_log:
+                    st.markdown("### 📟 TERMİNAL ÇIKTISI")
+                    st.code("Waiting for command...\n>_ Ready to scan...", language="bash")
+                st.markdown('</div>', unsafe_allow_html=True)
 
             with tab5:
                 cols = st.columns(4)
@@ -503,48 +594,20 @@ def dashboard_modu():
                 etki = sum(
                     [(df_analiz[df_analiz['Grup'] == g]['Agirlik_2025'].sum() / df_analiz['Agirlik_2025'].sum()) * v for
                      g, v in sim_inputs.items()])
-                st.metric("Simüle Enflasyon", f"%{genel_enflasyon + etki:.2f}", f"{etki:+.2f}% Etki",
-                          delta_color="inverse")
+
+                new_val = genel_enflasyon + etki
+                renk_sim = "#ff0055" if new_val > genel_enflasyon else "#00f260"
+
+                st.markdown(f"""
+                <div style="text-align:center; padding:20px; border:1px solid #334155; border-radius:12px; margin-top:20px;">
+                    <div style="font-size:14px; color:#94a3b8;">SİMÜLE EDİLEN ENFLASYON</div>
+                    <div style="font-size:40px; font-weight:bold; color:{renk_sim};">%{new_val:.2f}</div>
+                    <div style="font-size:12px; color:#e2e8f0;">Etki: {etki:+.2f}%</div>
+                </div>
+                """, unsafe_allow_html=True)
 
     else:
-        st.info("⚠️ Veri Bulunamadı. Lütfen 'Botu Başlat' butonunu kullanarak veri çekin.")
-
-    # --- YENİ YÖNETİM PANELİ ---
-    st.markdown('<div class="admin-panel"><div class="admin-header">🚀 SİSTEM KONTROL MERKEZİ</div>',
-                unsafe_allow_html=True)
-
-    c_center = st.columns([1, 2, 1])[1]
-
-    with c_center:
-        st.markdown('<div class="big-btn">', unsafe_allow_html=True)
-        if st.button("KAMPANYA BOTUNU BAŞLAT", type="primary", use_container_width=True):
-            log_cont = st.empty()
-
-            progress_text = "Veri kaynaklarına bağlanılıyor..."
-            my_bar = st.progress(0, text=progress_text)
-
-            def bot_logger(msg):
-                log_cont.code(msg, language="yaml")
-                try:
-                    my_bar.progress(50, text="Fiyatlar Analiz Ediliyor...")
-                except:
-                    pass
-
-            sonuc = migros_gida_botu(bot_logger)
-            my_bar.progress(100, text="Tamamlandı!")
-
-            if "OK" in sonuc:
-                st.success("✅ Veritabanı Başarıyla Güncellendi!")
-                st.balloons()
-                time.sleep(2)
-                st.rerun()
-            else:
-                st.error(sonuc)
-        st.markdown('</div>', unsafe_allow_html=True)
-        st.caption("Not: İşlem ürün sayısına bağlı olarak 1-2 dakika sürebilir.")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="signature">Fatih Arslan Tarafından Geliştirilmiştir</div>', unsafe_allow_html=True)
+        st.warning("⚠️ SİSTEM BEKLEMEDE. LÜTFEN 'BOT KONTROL' SEKMESİNDEN VERİ AKIŞINI BAŞLATIN.")
 
 
 if __name__ == "__main__":
