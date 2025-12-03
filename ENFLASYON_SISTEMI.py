@@ -148,7 +148,7 @@ def github_excel_guncelle(df_yeni, dosya_adi):
             c = repo.get_contents(dosya_adi, ref=st.secrets["github"]["branch"])
             old = pd.read_excel(BytesIO(c.decoded_content))
             yeni_tarih = df_yeni['Tarih'].iloc[0]
-            # Akıllı Kayıt: Aynı gün verisini duplicate yapma, güncelle
+            # Akıllı Kayıt
             old = old[~((old['Tarih'].astype(str) == str(yeni_tarih)) & (old['Kod'].isin(df_yeni['Kod'])))]
             final = pd.concat([old, df_yeni], ignore_index=True)
         except:
@@ -312,34 +312,43 @@ def dashboard_modu():
 
             st.markdown("<br>", unsafe_allow_html=True)
 
-            # 📈 ANA GRAFİK (PRO VERSİYON - GRADIENT)
-            fig_area = go.Figure()
-            fig_area.add_trace(go.Scatter(
-                x=df_trend['Tarih'], y=df_trend['TÜFE'],
-                mode='lines',
-                name='TÜFE',
-                line=dict(color='#2563eb', width=3),
-                fill='tozeroy',
-                fillcolor='rgba(37, 99, 235, 0.1)'  # Gradient Efekti
+            # 🚀 PRO ŞELALE GRAFİĞİ (WATERFALL)
+            # Katkı Hesabı: (Grup Farkı * Grup Ağırlığı) / Toplam Ağırlık
+            total_weight = df_analiz['Agirlik_2025'].sum()
+            df_analiz['Katki'] = (df_analiz[son] - df_analiz[baz]) * df_analiz['Agirlik_2025']
+            df_katki = df_analiz.groupby('Grup')['Katki'].sum().reset_index()
+            df_katki['Katki_Puan'] = (df_katki['Katki'] / total_weight) * 100
+
+            # Sırala ve Çiz
+            df_katki = df_katki.sort_values('Katki_Puan', ascending=False)
+
+            fig_water = go.Figure(go.Waterfall(
+                name="Enflasyon Katkısı", orientation="v",
+                measure=["relative"] * len(df_katki),
+                x=df_katki['Grup'],
+                textposition="outside",
+                text=[f"%{x:.2f}" for x in df_katki['Katki_Puan']],
+                y=df_katki['Katki_Puan'],
+                connector={"line": {"color": "rgb(63, 63, 63)"}},
+                decreasing={"marker": {"color": "#16a34a"}},  # Yeşil (Düşüş)
+                increasing={"marker": {"color": "#dc2626"}},  # Kırmızı (Artış)
+                totals={"marker": {"color": "#0f172a"}}
             ))
-            fig_area.update_layout(
-                title=dict(text="📈 Enflasyon Trend Analizi", font=dict(size=18, color='#0f172a')),
+            fig_water.update_layout(
+                title=dict(text="📊 Enflasyon Kaynak Analizi (Sektörel Katkı)", font=dict(size=18, color='#0f172a')),
                 plot_bgcolor='white', paper_bgcolor='white',
                 margin=dict(t=50, b=0, l=0, r=0),
-                xaxis=dict(showgrid=True, gridcolor='#f1f5f9', rangeslider=dict(visible=True)),
-                yaxis=dict(showgrid=True, gridcolor='#f1f5f9'),
-                hovermode="x unified"
+                yaxis=dict(title="Puan Etkisi", showgrid=True, gridcolor='#f1f5f9'),
+                showlegend=False
             )
-            st.plotly_chart(fig_area, use_container_width=True)
+            st.plotly_chart(fig_water, use_container_width=True)
 
             # SEKMELER
             tabs = st.tabs(
                 ["🤖 AKILLI ASİSTAN", "🫧 BALONCUKLAR", "🍏 GIDA", "🚀 ZİRVE", "📉 FIRSATLAR", "📑 LİSTE", "🎲 SİMÜLE"])
 
-            with tabs[0]:  # ASİSTAN (KUTUSUZ - CLEAN)
+            with tabs[0]:  # ASİSTAN (PRO)
                 st.markdown("##### 🤖 Piyasa Analiz Asistanı")
-
-                # Input için Container - Beyaz bar sorununu çözer
                 with st.container():
                     sorgu_ham = st.text_input("", placeholder="Ürün veya kategori yazın (Örn: Süt, Yağ)...",
                                               label_visibility="collapsed")
@@ -347,10 +356,9 @@ def dashboard_modu():
                 if sorgu_ham:
                     sorgu = sorgu_ham.lower()
                     sonuc_urun = df_analiz[df_analiz['Madde adı'].str.lower().str.contains(sorgu, na=False)]
-
                     target = None
+
                     if not sonuc_urun.empty:
-                        # 1. SEÇİM KUTUSU
                         if len(sonuc_urun) > 1:
                             st.info(f"Birden fazla sonuç: {', '.join(sonuc_urun['Madde adı'].unique())}. Lütfen seçin:")
                             secim = st.selectbox("", sonuc_urun['Madde adı'].unique(), label_visibility="collapsed")
@@ -358,34 +366,28 @@ def dashboard_modu():
                         else:
                             target = sonuc_urun.iloc[0]
 
-                        # 2. ANALİZ & RENK
                         if target is not None:
                             fark = target['Fark'] * 100
-                            # RENK MANTIĞI: ARTIŞ KIRMIZI, AZALIŞ YEŞİL
                             if fark > 0:
-                                durum_icon = "📈"
-                                durum_text = "ZAMLANDI"
-                                color_style = "#dc2626"  # Kırmızı
+                                durum_icon = "📈";
+                                durum_text = "ZAMLANDI";
+                                color_style = "#dc2626";
                                 bg_style = "#fef2f2"
                                 msg_extra = f"Genel enflasyon (%{genel_enf:.2f}) ile kıyaslandığında dikkat çekici bir artış."
-                                badge_cls = "badge-bad"
                             elif fark < 0:
-                                durum_icon = "🎉"
-                                durum_text = "İNDİRİMDE"
-                                color_style = "#16a34a"  # Yeşil
+                                durum_icon = "🎉";
+                                durum_text = "İNDİRİMDE";
+                                color_style = "#16a34a";
                                 bg_style = "#f0fdf4"
                                 msg_extra = "Bu ürünün fiyatı düşüş eğiliminde."
-                                badge_cls = "badge-good"
                             else:
-                                durum_icon = "➖"
-                                durum_text = "SABİT"
-                                color_style = "#475569"
+                                durum_icon = "➖";
+                                durum_text = "SABİT";
+                                color_style = "#475569";
                                 bg_style = "#f8fafc"
                                 msg_extra = "Fiyat değişmedi."
-                                badge_cls = "badge-good"
 
-                            # HTML MESAJ
-                            html_msg = f"""
+                            st.markdown(f"""
                                 <div style="background-color:{bg_style}; border-left: 5px solid {color_style}; padding: 20px; border-radius: 8px; color: #1e293b; margin-top:20px;">
                                     <div style="font-size:20px; font-weight:800; color:{color_style}; margin-bottom:10px;">
                                         {durum_icon} {durum_text} (%{fark:.2f})
@@ -397,10 +399,8 @@ def dashboard_modu():
                                         <span style="font-size:14px; color:#64748b;">ℹ️ {msg_extra}</span>
                                     </div>
                                 </div>
-                            """
-                            st.markdown(html_msg, unsafe_allow_html=True)
+                            """, unsafe_allow_html=True)
 
-                            # MİNİ GRAFİK
                             hist = df_f[df_f['Kod'] == target['Kod']].sort_values('Tam_Zaman')
                             fig_mini = px.line(hist, x='Tam_Zaman', y='Fiyat', markers=True, title="Fiyat Tarihçesi")
                             fig_mini.update_traces(line_color='#2563eb', line_width=3)
