@@ -15,22 +15,20 @@ import random
 import shutil
 import json
 
-# --- 1. SAYFA VE TASARIM AYARLARI (ESKİ HAVALI TASARIM) ---
-st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="🏦", layout="wide", initial_sidebar_state="collapsed")
+# --- 1. SAYFA VE TASARIM AYARLARI ---
+st.set_page_config(page_title="ENFLASYON MONITORU", page_icon="🍏", layout="wide", initial_sidebar_state="collapsed")
 
 st.markdown("""
     <style>
-        /* Temel Gizlemeler */
         [data-testid="stSidebar"] {display: none;}
         [data-testid="stToolbar"] {visibility: hidden !important;} 
-        [data-testid="stHeader"] {visibility: hidden !important;}
         .stDeployButton {display:none !important;} 
         footer {visibility: hidden;} 
         #MainMenu {visibility: hidden;}
 
         .stApp {background-color: #F8F9FA; color: #212529;}
 
-        /* Ticker (Kayan Yazı) */
+        /* Ticker */
         .ticker-wrap {
             width: 100%; overflow: hidden; background-color: #FFFFFF;
             border-bottom: 2px solid #ebc71d; white-space: nowrap;
@@ -40,34 +38,26 @@ st.markdown("""
         .ticker-item { display: inline-block; padding: 0 2rem; font-family: 'Segoe UI', sans-serif; font-weight: 600; font-size: 14px; }
         @keyframes ticker { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* Metrik Kartları */
+        /* Kartlar */
         div[data-testid="metric-container"] {
             background: #FFFFFF; border: 1px solid #EAEDF0; border-radius: 12px; padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02); transition: all 0.3s ease;
-        }
-        div[data-testid="metric-container"]:hover {
-            transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-color: #ebc71d;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
         }
 
-        /* Alt Yönetim Paneli */
+        /* Panel */
         .admin-panel {
             background-color: #FFFFFF; border-top: 4px solid #ebc71d; padding: 30px;
             border-radius: 15px; margin-top: 50px; box-shadow: 0 -5px 25px rgba(0,0,0,0.05);
         }
 
-        /* Terminal Log Görünümü */
-        .stCodeBlock {
-            border: 2px solid #ebc71d !important;
-            border-radius: 5px;
-        }
-
-        /* Migros Butonu İçin Stil */
+        /* Migros Butonu */
         .migros-btn button {
             background-color: #f68b1f !important;
             color: white !important;
             border: none !important;
             height: 50px;
             font-size: 18px !important;
+            font-weight: bold !important;
         }
         .migros-btn button:hover {
             background-color: #d67616 !important;
@@ -115,10 +105,9 @@ def install_browsers():
         pass
 
 
-# --- 🤖 MİGROS BOTU (HIZLI & GÜVENİLİR) 🤖 ---
-# --- 🏎️ MİGROS FORMULA 1 BOTU (ADBLOCKER + JSON + HIZ) 🏎️ ---
+# --- 🐢 MİGROS GÜVENLİ BOT (SAFE MODE + İSİMLİ LOG) 🐢 ---
 def migros_gida_botu(log_callback=None):
-    if log_callback: log_callback("🏎️ Formula 1 Modu: Tracker ve Reklamlar Engelleniyor...")
+    if log_callback: log_callback("🛡️ Güvenli Mod Başlatılıyor...")
     install_browsers()
 
     # Listeyi Hazırla
@@ -135,93 +124,98 @@ def migros_gida_botu(log_callback=None):
     total = len(takip)
 
     with sync_playwright() as p:
+        # Firefox ile Başlat
         browser = p.firefox.launch(headless=True)
         context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
+            viewport={"width": 1920, "height": 1080}
         )
 
         page = context.new_page()
 
-        # --- 🚫 REKLAM VE TRACKER ENGELLEME (HIZIN SIRRI BURADA) 🚫 ---
-        def route_handler(route):
-            req = route.request
-            # Gereksiz kaynak tipleri
-            if req.resource_type in ["image", "media", "font", "stylesheet", "other"]:
-                route.abort()
-            # Hızı öldüren domainler (Analytics, Insider, vb.)
-            elif any(x in req.url for x in
-                     ["google-analytics", "facebook", "insider", "criteo", "hotjar", "adjust", "analytics"]):
-                route.abort()
-            else:
-                route.continue_()
+        # Sadece Resimleri ve Videoları Engelle (CSS açık kalsın, Migros bozulmasın)
+        page.route("**/*", lambda route: route.abort()
+        if route.request.resource_type in ["image", "media", "font"]
+        else route.continue_())
 
-        page.route("**/*", route_handler)
         page.add_init_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
 
         for i, row in takip.iterrows():
-            urun_adi = str(row.get('Madde adı', '---'))[:20]
+            urun_adi = str(row.get('Madde adı', 'Bilinmeyen'))[:25]
             url = row['URL']
 
-            if log_callback: log_callback(f"🏎️ [{i + 1}/{total}] {urun_adi}...")
+            # Arama Logu
+            if log_callback: log_callback(f"🔎 [{i + 1}/{total}] {urun_adi} aranıyor...")
 
             fiyat = 0.0
+            kaynak = ""
 
             try:
-                # domcontentloaded: HTML yüklendiği an devam et (Resimleri bekleme)
-                page.goto(url, timeout=15000, wait_until="domcontentloaded")
+                # Güvenli Yükleme (Biraz bekler ama garanti yükler)
+                page.goto(url, timeout=30000, wait_until="domcontentloaded")
 
-                # --- AŞAMA 1: JSON-LD (En Hızlısı) ---
+                # Sayfanın oturması için kısa bekleme (Güvenli modun sırrı)
+                time.sleep(1.5)
+
+                # 1. YÖNTEM: JSON-LD (Metadata)
                 try:
-                    # Script etiketini maksimum 1.5 saniye bekle
-                    script_tag = page.wait_for_selector("script[type='application/ld+json']", timeout=1500)
-                    if script_tag:
-                        json_content = script_tag.inner_text()
-                        data = json.loads(json_content)
-                        if "offers" in data and "price" in data["offers"]:
-                            fiyat = float(data["offers"]["price"])
-                        elif "hasVariant" in data:
-                            fiyat = float(data["hasVariant"][0]["offers"]["price"])
+                    # Script etiketini bekle
+                    page.wait_for_selector("script[type='application/ld+json']", timeout=2000)
+                    json_data = page.locator("script[type='application/ld+json']").first.inner_text()
+                    data = json.loads(json_data)
+
+                    if "offers" in data and "price" in data["offers"]:
+                        fiyat = float(data["offers"]["price"])
+                        kaynak = "Meta"
+                    elif "hasVariant" in data:
+                        fiyat = float(data["hasVariant"][0]["offers"]["price"])
+                        kaynak = "Varyant"
                 except:
                     pass
 
-                # --- AŞAMA 2: CSS (Yedek) ---
+                # 2. YÖNTEM: CSS (Görsel Etiketler)
                 if fiyat == 0:
                     try:
-                        # Fiyat etiketini maksimum 1 saniye bekle
-                        el = page.wait_for_selector("sm-product-price .amount, .product-price, #price-value",
-                                                    timeout=1000)
-                        if el:
-                            txt = el.inner_text()
-                            val = temizle_fiyat(txt)
-                            if val: fiyat = val
+                        selectors = ["sm-product-price .amount", ".product-price", "#price-value",
+                                     "fe-product-price .amount"]
+                        for sel in selectors:
+                            if page.locator(sel).count() > 0:
+                                txt = page.locator(sel).first.inner_text()
+                                val = temizle_fiyat(txt)
+                                if val: fiyat = val; kaynak = "CSS"; break
                     except:
                         pass
 
-                # --- AŞAMA 3: REGEX (Son Çare) ---
+                # 3. YÖNTEM: Regex (Acil Durum)
                 if fiyat == 0:
-                    # Sadece body text'ini al (HTML parse etmeden)
-                    txt = page.locator("body").inner_text()
-                    bulunan = re.search(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', txt)
-                    if bulunan:
-                        val = temizle_fiyat(bulunan.group(0))
-                        if val: fiyat = val
+                    try:
+                        body_txt = page.locator("body").inner_text()
+                        bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_txt)
+                        vals = [temizle_fiyat(x) for x in bulunanlar if temizle_fiyat(x)]
+                        if vals: fiyat = vals[0]; kaynak = "Regex"
+                    except:
+                        pass
 
             except:
-                pass  # Hata olursa bir sonraki ürüne geç, durma
+                pass
 
+            # SONUÇ LOGU (İSİMLİ)
             if fiyat > 0:
-                if log_callback: log_callback(f"✅ {fiyat} TL")
+                if log_callback: log_callback(f"✅ {urun_adi}: {fiyat} TL")  # İSTEĞİN BURADA
                 veriler.append({
                     "Tarih": datetime.now().strftime("%Y-%m-%d"),
                     "Zaman": datetime.now().strftime("%H:%M"),
                     "Kod": row.get('Kod'),
                     "Madde_Adi": row.get('Madde adı'),
                     "Fiyat": fiyat,
-                    "Kaynak": "Migros Auto",
+                    "Kaynak": "Migros Safe",
                     "URL": url
                 })
             else:
-                if log_callback: log_callback("❌ Bulunamadı")
+                if log_callback: log_callback(f"❌ {urun_adi}: Bulunamadı")
+
+            # IP Ban yememek için 1 saniye dinlen
+            time.sleep(1)
 
         browser.close()
 
@@ -246,19 +240,20 @@ def migros_gida_botu(log_callback=None):
     return "Veri Yok"
 
 
-# --- 📊 ANA DASHBOARD (ESKİ TASARIM + YENİ MOTOR) 📊 ---
+# --- 📊 ANA DASHBOARD (ZORLA YENİLEME MODU) 📊 ---
 def dashboard_modu():
-    # 1. VERİ YÜKLEME (Her seferinde taze)
+    # 1. VERİ OKUMA
     def veri_yukle():
         if not os.path.exists(FIYAT_DOSYASI): return None, None
         try:
+            # Diskten Taze Oku
             df_f = pd.read_excel(FIYAT_DOSYASI, sheet_name="Fiyat_Log")
             if df_f.empty: return pd.DataFrame(), None
 
             df_f['Tarih'] = pd.to_datetime(df_f['Tarih'])
             df_f['Kod'] = df_f['Kod'].astype(str).apply(kod_standartlastir)
             df_f['Fiyat'] = pd.to_numeric(df_f['Fiyat'], errors='coerce')
-            df_f = df_f[df_f['Fiyat'] > 0]
+            df_f = df_f[df_f['Fiyat'] > 0]  # Sıfırları at
 
             df_s = pd.read_excel(EXCEL_DOSYASI, sheet_name=SAYFA_ADI, dtype={'Kod': str})
             df_s['Kod'] = df_s['Kod'].astype(str).apply(kod_standartlastir)
@@ -279,16 +274,17 @@ def dashboard_modu():
 
     # --- HESAPLAMALAR ---
     if df_fiyat is not None and not df_fiyat.empty:
-        # Son veriyi bul (Tarih+Zaman sırala)
+        # En Güncel Veriyi Bul
         if 'Zaman' in df_fiyat.columns:
             df_fiyat['Tam_Zaman'] = pd.to_datetime(df_fiyat['Tarih'].astype(str) + ' ' + df_fiyat['Zaman'].astype(str),
                                                    errors='coerce')
         else:
             df_fiyat['Tam_Zaman'] = df_fiyat['Tarih']
-        df_fiyat = df_fiyat.sort_values('Tam_Zaman')
+
+        df_fiyat = df_fiyat.sort_values('Tam_Zaman')  # Eskiden yeniye sırala
         df_fiyat['Gun'] = df_fiyat['Tarih'].dt.date
 
-        # PIVOT (aggfunc='last' ile son fiyatı al)
+        # PIVOT (Son fiyat geçerli)
         pivot = df_fiyat.pivot_table(index='Kod', columns='Gun', values='Fiyat', aggfunc='last')
         pivot = pivot.ffill(axis=1).bfill(axis=1)
 
@@ -325,7 +321,7 @@ def dashboard_modu():
 
             # --- ARAYÜZ ---
 
-            # 1. TICKER
+            # Ticker
             ticker_html = ""
             for _, r in df_analiz.sort_values('Fark', ascending=False).head(8).iterrows():
                 val = r['Fark']
@@ -336,9 +332,9 @@ def dashboard_modu():
                 f"""<div class="ticker-wrap"><div class="ticker"><div class="ticker-item">PİYASA AKIŞI: &nbsp;&nbsp; {ticker_html}</div></div></div>""",
                 unsafe_allow_html=True)
 
-            # 2. ÜST METRİKLER
+            # Üst Metrikler
             st.title("🟡 ENFLASYON MONİTÖRÜ")
-            st.caption(f"📅 Son Güncelleme: {son_gun} | 🕒 {datetime.now().strftime('%H:%M')}")
+            st.caption(f"📅 Son Veri: {son_gun} | Sistem Saati: {datetime.now().strftime('%H:%M')}")
 
             c1, c2, c3, c4 = st.columns(4)
             c1.metric("GENEL ENDEKS", f"{son_endeks:.2f}", "Baz: 100")
@@ -349,19 +345,18 @@ def dashboard_modu():
 
             st.markdown("---")
 
-            # 3. GRAFİKLER (ALAN + İBRE)
             c_left, c_right = st.columns([2, 1])
             with c_left:
                 st.plotly_chart(px.area(df_trend, x='Tarih', y='TÜFE', color_discrete_sequence=['#ebc71d']),
                                 use_container_width=True)
             with c_right:
                 val = min(max(0, abs(genel_enflasyon)), 50)
-                fig_gauge = go.Figure(go.Indicator(mode="gauge+number", value=val,
-                                                   gauge={'axis': {'range': [None, 50]}, 'bar': {'color': "#dc3545"},
-                                                          'bgcolor': "white"}))
-                st.plotly_chart(fig_gauge, use_container_width=True)
+                st.plotly_chart(go.Figure(go.Indicator(mode="gauge+number", value=val,
+                                                       gauge={'axis': {'range': [None, 50]},
+                                                              'bar': {'color': "#dc3545"}, 'bgcolor': "white"})),
+                                use_container_width=True)
 
-            # 4. SEKMELER (ESKİ YAPININ AYNISI + GIDA EKLENDİ)
+            # SEKMELER
             tab1, tab2, tab3, tab4, tab5 = st.tabs(
                 ["GENEL", "🍏 GIDA (MİGROS)", "SEKTÖREL", "DETAYLI LİSTE", "SİMÜLASYON"])
 
@@ -381,7 +376,6 @@ def dashboard_modu():
                     kg2.metric("Ortalama Ürün Artışı", f"%{gida_aylik:.2f}")
                     st.divider()
 
-                    # Tablo (Rename ile hata önlendi)
                     df_show = df_gida[['Madde adı', 'Fark', son_gun]].sort_values('Fark', ascending=False)
                     df_show = df_show.rename(columns={son_gun: "Son_Tutar"})
                     st.dataframe(df_show,
@@ -390,19 +384,18 @@ def dashboard_modu():
                                                                                            format="%.2f ₺")},
                                  hide_index=True, use_container_width=True)
                 else:
-                    st.warning("Gıda verisi yok.")
+                    st.warning("Henüz gıda verisi yok.")
 
-            with tab3:  # Etki Analizi (Waterfall)
+            with tab3:  # Etki
                 grup_katki = df_analiz.groupby('Grup')['Fark'].mean().sort_values(ascending=False).head(10) * 100
                 st.plotly_chart(go.Figure(
                     go.Waterfall(orientation="v", measure=["relative"] * len(grup_katki), x=grup_katki.index,
                                  y=grup_katki.values)), use_container_width=True)
 
-            with tab4:  # Detaylı Liste
+            with tab4:  # Detaylı
                 st.dataframe(df_analiz[['Emoji', 'Madde adı', 'Grup', 'Fark']], use_container_width=True)
 
             with tab5:  # Simülasyon
-                st.info("Tahmini zam oranları:")
                 cols = st.columns(4)
                 sim_inputs = {grp: cols[i % 4].number_input(f"{grp} (%)", -100.0, 100.0, 0.0) for i, grp in
                               enumerate(sorted(df_analiz['Grup'].unique()))}
@@ -438,15 +431,16 @@ def dashboard_modu():
         st.markdown('<div class="migros-btn">', unsafe_allow_html=True)
         if st.button("🍏 GIDA HESAPLA (MİGROS)", type="primary", use_container_width=True):
             log_cont = st.empty()
-            # Botu Çalıştır
+
+            # 1. BOTU ÇALIŞTIR
             sonuc = migros_gida_botu(lambda m: log_cont.code(m, language="yaml"))
 
+            # 2. BAŞARILIYSA GÜNCELLE
             if "OK" in sonuc:
                 st.success("Güncellendi! Sayfa Yenileniyor...")
-                # --- NÜKLEER YENİLEME ---
-                st.cache_data.clear()
-                time.sleep(1)
-                st.rerun()
+                st.cache_data.clear()  # Hafızayı sil
+                time.sleep(1)  # Dosya yazımı için bekle
+                st.rerun()  # Sayfayı yenile
             else:
                 st.error(sonuc)
         st.markdown('</div>', unsafe_allow_html=True)
