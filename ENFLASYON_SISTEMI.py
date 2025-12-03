@@ -223,28 +223,57 @@ def migros_gida_botu(log_callback=None):
                 except:
                     pass
 
-                # 2. YÖNTEM: CSS
-                if fiyat == 0:
-                    try:
-                        selectors = ["sm-product-price .amount", ".product-price", "#price-value",
-                                     "fe-product-price .amount"]
-                        for sel in selectors:
-                            if page.locator(sel).count() > 0:
-                                txt = page.locator(sel).first.inner_text()
-                                val = temizle_fiyat(txt)
-                                if val: fiyat = val; kaynak = "CSS"; break
-                    except:
-                        pass
+                    # -----------------------------------------------------------
+                    # GÜNCELLENEN KISIM BAŞLANGIÇ
+                    # -----------------------------------------------------------
 
-                # 3. YÖNTEM: Regex
-                if fiyat == 0:
-                    try:
-                        body_txt = page.locator("body").inner_text()
-                        bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_txt)
-                        vals = [temizle_fiyat(x) for x in bulunanlar if temizle_fiyat(x)]
-                        if vals: fiyat = vals[0]; kaynak = "Regex"
-                    except:
-                        pass
+                    # 2. YÖNTEM: CSS (Özel Seçiciler Eklendi)
+                    if fiyat == 0:
+                        try:
+                            # Senin istediğin öncelik sırasına göre selector listesi:
+                            selectors = [
+                                # 1. Örnek: <span ...> 80,95 <span class="currency">TL</span></span>
+                                # Mantık: İçinde 'currency' class'ı olan span'ın kendisini (parent) seçer.
+                                "span:has(span.currency)",
+
+                                # 2. Örnek: <div id="sale-price">449,95 TL</div>
+                                "#sale-price",
+                                ".sale-price",
+
+                                # Eski yedekler (Migros'un diğer şablonları için)
+                                "sm-product-price .amount",
+                                ".product-price",
+                                "fe-product-price .amount",
+                                ".amount"
+                            ]
+
+                            for sel in selectors:
+                                # Görünür olan ilk öğeyi al
+                                if page.locator(sel).count() > 0:
+                                    # inner_text genelde "80,95 TL" döner
+                                    txt = page.locator(sel).first.inner_text()
+                                    val = temizle_fiyat(txt)
+                                    if val:
+                                        fiyat = val;
+                                        kaynak = f"CSS ({sel})"
+                                        break
+                        except:
+                            pass
+
+                    # 3. YÖNTEM: Regex (Sadece HTML Body içinde kalanlar için)
+                    if fiyat == 0:
+                        try:
+                            body_txt = page.locator("body").inner_text()
+                            # HTML'deki "80,95 TL" gibi metinleri yakalar
+                            bulunanlar = re.findall(r'(\d{1,3}(?:[.,]\d{3})*(?:[.,]\d{2})?)\s*(?:TL|₺)', body_txt)
+                            vals = [temizle_fiyat(x) for x in bulunanlar if temizle_fiyat(x)]
+                            if vals: fiyat = vals[0]; kaynak = "Regex"
+                        except:
+                            pass
+
+                    # -----------------------------------------------------------
+                    # GÜNCELLENEN KISIM BİTİŞ
+                    # -----------------------------------------------------------
 
             except:
                 pass
