@@ -84,10 +84,16 @@ st.markdown("""
         .delta-neu { background: #f1f5f9; color: #475569; }
 
         /* 🤖 ASİSTAN PRO UI */
-        .chat-container {
-            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); margin-bottom: 20px;
+        .bot-bubble {
+            background: #f8fafc; border-left: 4px solid #3b82f6; padding: 20px; border-radius: 0 8px 8px 8px;
+            margin-top: 20px; color: #334155; font-size: 15px; line-height: 1.6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
+        .analysis-badge {
+            display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-bottom: 10px;
+        }
+        .badge-bad { background: #fee2e2; color: #991b1b; }
+        .badge-good { background: #dcfce7; color: #166534; }
 
         /* 🚀 ACTION BUTTON */
         .action-container { margin-top: 40px; text-align: center; }
@@ -330,54 +336,57 @@ def dashboard_modu():
             tabs = st.tabs(
                 ["🤖 AKILLI ASİSTAN", "🫧 BALONCUKLAR", "🍏 GIDA", "🚀 ZİRVE", "📉 FIRSATLAR", "📑 LİSTE", "🎲 SİMÜLE"])
 
-            with tabs[0]:  # ASİSTAN (GELİŞMİŞ RENK & SEÇİM)
-                st.markdown('<div class="chat-container">', unsafe_allow_html=True)
+            with tabs[0]:  # ASİSTAN (KUTUSUZ - CLEAN)
                 st.markdown("##### 🤖 Piyasa Analiz Asistanı")
-                sorgu_ham = st.text_input("", placeholder="Merak ettiğin ürünü veya kategoriyi yaz (Örn: Süt, Yağ)...",
-                                          label_visibility="collapsed")
+
+                # Input için Container - Beyaz bar sorununu çözer
+                with st.container():
+                    sorgu_ham = st.text_input("", placeholder="Ürün veya kategori yazın (Örn: Süt, Yağ)...",
+                                              label_visibility="collapsed")
 
                 if sorgu_ham:
                     sorgu = sorgu_ham.lower()
                     sonuc_urun = df_analiz[df_analiz['Madde adı'].str.lower().str.contains(sorgu, na=False)]
-                    target = None
 
+                    target = None
                     if not sonuc_urun.empty:
-                        # 1. ÇOKLU SEÇİM KONTROLÜ
+                        # 1. SEÇİM KUTUSU
                         if len(sonuc_urun) > 1:
-                            st.info(f"🤔 '{sorgu_ham}' için birden fazla sonuç buldum. Hangisi?")
-                            secim = st.selectbox("Lütfen Seçin:", sonuc_urun['Madde adı'].unique(),
-                                                 label_visibility="collapsed")
+                            st.info(f"Birden fazla sonuç: {', '.join(sonuc_urun['Madde adı'].unique())}. Lütfen seçin:")
+                            secim = st.selectbox("", sonuc_urun['Madde adı'].unique(), label_visibility="collapsed")
                             target = df_analiz[df_analiz['Madde adı'] == secim].iloc[0]
                         else:
                             target = sonuc_urun.iloc[0]
 
-                        # 2. ANALİZ VE RENKLENDİRME
+                        # 2. ANALİZ & RENK
                         if target is not None:
                             fark = target['Fark'] * 100
-
                             # RENK MANTIĞI: ARTIŞ KIRMIZI, AZALIŞ YEŞİL
                             if fark > 0:
                                 durum_icon = "📈"
                                 durum_text = "ZAMLANDI"
                                 color_style = "#dc2626"  # Kırmızı
                                 bg_style = "#fef2f2"
-                                msg_extra = "Bu ürünün fiyatı artış eğiliminde."
+                                msg_extra = f"Genel enflasyon (%{genel_enf:.2f}) ile kıyaslandığında dikkat çekici bir artış."
+                                badge_cls = "badge-bad"
                             elif fark < 0:
                                 durum_icon = "🎉"
                                 durum_text = "İNDİRİMDE"
                                 color_style = "#16a34a"  # Yeşil
                                 bg_style = "#f0fdf4"
-                                msg_extra = "Fiyat düşüşü yakaladınız."
+                                msg_extra = "Bu ürünün fiyatı düşüş eğiliminde."
+                                badge_cls = "badge-good"
                             else:
                                 durum_icon = "➖"
                                 durum_text = "SABİT"
                                 color_style = "#475569"
                                 bg_style = "#f8fafc"
                                 msg_extra = "Fiyat değişmedi."
+                                badge_cls = "badge-good"
 
                             # HTML MESAJ
                             html_msg = f"""
-                                <div style="background-color:{bg_style}; border-left: 5px solid {color_style}; padding: 20px; border-radius: 8px; color: #1e293b;">
+                                <div style="background-color:{bg_style}; border-left: 5px solid {color_style}; padding: 20px; border-radius: 8px; color: #1e293b; margin-top:20px;">
                                     <div style="font-size:20px; font-weight:800; color:{color_style}; margin-bottom:10px;">
                                         {durum_icon} {durum_text} (%{fark:.2f})
                                     </div>
@@ -393,15 +402,14 @@ def dashboard_modu():
 
                             # MİNİ GRAFİK
                             hist = df_f[df_f['Kod'] == target['Kod']].sort_values('Tam_Zaman')
-                            fig_mini = px.line(hist, x='Tam_Zaman', y='Fiyat', markers=True)
+                            fig_mini = px.line(hist, x='Tam_Zaman', y='Fiyat', markers=True, title="Fiyat Tarihçesi")
                             fig_mini.update_traces(line_color='#2563eb', line_width=3)
-                            fig_mini.update_layout(height=250, margin=dict(t=20, b=0, l=0, r=0),
+                            fig_mini.update_layout(height=250, margin=dict(t=30, b=0, l=0, r=0),
                                                    plot_bgcolor='rgba(0,0,0,0)', xaxis_title=None,
                                                    yaxis_title="Fiyat (TL)")
                             st.plotly_chart(fig_mini, use_container_width=True)
                     else:
-                        st.warning(f"😕 '{sorgu_ham}' ile ilgili bir kayıt bulunamadı.")
-                st.markdown('</div>', unsafe_allow_html=True)
+                        st.warning("Veri bulunamadı.")
 
             with tabs[1]:  # BUBBLE
                 st.markdown("##### 🫧 Sektörel Dağılım")
@@ -455,7 +463,7 @@ def dashboard_modu():
 
     # ACTION BUTTON
     st.markdown('<div class="action-container"><div class="action-btn">', unsafe_allow_html=True)
-    if st.button("Gıdamı Hesapla!", type="primary", use_container_width=True):
+    if st.button("SİSTEMİ GÜNCELLE (MİGROS BOTU)", type="primary", use_container_width=True):
         ph = st.empty();
         bar = st.progress(0)
         res = migros_gida_botu(lambda m: ph.info(m))
