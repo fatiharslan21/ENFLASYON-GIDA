@@ -1,0 +1,407 @@
+https://www.migros.com.tr/migros-baldo-pirinc-1-kg-p-f6a53		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/sinangil-tam-bugday-unu-1-kg-p-4c8cdd		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/bebelac-bebek-devam-sutu-1-400-g-p-4cec83		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/torku-pilavlik-bulgur-25-kg-p-1067d5		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/sofra-ekmek-adet-p-4e2000		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/ulker-altinbasak-tahil-cipsi-50-g-p-6af7bd		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/wefood-feslegenli-kraker-40-g-p-4cea14		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/eti-karam-gurme-bitter-cikolata-kremali-gofret-3lu-150-g-p-6d5053		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/yas-pasta-no1-p-4e208a		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/eti-browni-klasik-cikolatali-findikli-kek-200-g-p-6b47f6		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/fistikli-baklava-kg-p-4e20d5		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/el-acmasi-yufka-kg-p-4d8032		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/barilla-tagliatelle-makarna-450-g-p-4cc168		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/filiz-arpa-sehriye-500-g-p-4cc1d5		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/nestle-cheerios-balli-tahil-gevregi-225-g-p-4db053		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/dana-stragonof-kg-but-eti-p-17d9f88		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kuzu-biftek-kg-but-eti-dilimlenmis-p-16e5d69		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/banvit-pilic-bonfile-kg-p-2be844b		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/dana-ciger-kg-p-18ce199		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/namet-dana-kasap-sucuk-250-g-p-d8d1b8		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/banvit-jumbo-sosis-330-g-p-ce0849		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/pinar-ac-bitir-hindi-salam-taze-dilimlenmis-10-dilim-75-g-p-d749cc		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/gurmepack-hunkar-begendi-250-g-p-121eece		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/super-kartal-tarama-90-g-p-1131eb3		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-iri-parcali-ton-baligi-2-x-160-g-p-8a1bec		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/icim-rahat-laktozsuz-sut-1-l-p-a80012		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/sutas-kaymaksiz-yogurt-1000-g-p-bebd9c		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/eker-supangle-150-g-p-b06b76		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/ekici-beyaz-peynir-kg-p-98d9b9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/bahcivan-kasar-peyniri-taze-700-g-p-9a1da1		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/ariste-tulum-peyniri-250-g-p-98e0fb		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/pinar-krem-peynir-300-g-p-9d2b88		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/keskinoglu-15li-l-buyuk-boy-yumurta-63-72-g-p-1312d28		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-tereyagi-1-kg-p-b75d84		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/luna-tereyagi-lezzeti-kase-margarin-250-g-p-402a66		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/aivalos-sizma-zeytinyagi-century-750-ml-p-3f05ec		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-aycicek-yagi-5-l-koseli-pet-p-3eb728		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/portakal-kg-p-1a0a047		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/uzum-red-globe-kg-p-1a11d4b		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/armut-deveci-kg-p-19c5e68		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/ayva-kg-p-19c71f0		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kiraz-yer-altin-cilek-100-g-p-1a43a48		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/elma-granny-smith-kg-p-19e0448		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/oneo-karpuz-aromali-draje-sakiz-21-g-p-6ca51e		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kavun-kislik-kg-p-19f2175		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kivi-kg-p-19fcd50		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/limon-kg-p-19ff462		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/mandalina-naturel-kg-p-1a05de4		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/muz-ithal-kg-p-1a01f58		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/nar-kg-p-1a06990		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/seftali-kg-p-1a0b7b0?srsltid=AfmBOor77vAwo3SDnOB7SoigtL6hHAAJsb9wos9_2fSF2DqojT_uVR0D		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-kavrulmus-badem-ici-150-g-p-7b4bab		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/ceviz-ici-kg-p-7b706e		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-kavrulmus-findik-ici-150g-p-7b4ae1		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/master-nut-kabuklu-antep-fistigi-140-g-p-7b49d9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tadim-tuzlu-yer-fistigi-180-g-p-7b4947		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-cifte-kavrulmus-sari-leblebi-200g-p-7b4ab1		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tadim-bol-tuzlu-kavrulmus-siyah-aycekirdek-180-g-p-7b716a		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tadim-kabak-cekirdegi-180-g-p-7b8e7c		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tadim-sultaniye-kuru-uzum-140-g-p-7b704f		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tadim-kuru-kayisi-140-g-p-7b703f		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/biber-carliston-kg-p-1ac0638		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/biber-dolmalik-kg-p-1ac0a20		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/biber-sivri-kg-p-1ac11f0		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/dereotu-adet-p-1ac2969		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/domates-kokteyl-kg-p-1aca278		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/superfresh-taze-fasulye-450-g-p-1038d63		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/havuc-beypazari-paket-kg-p-1ad36f9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/ispanak-kg-p-1ad6243		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kabak-sakiz-kg-p-1adb000		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/karnabahar-kg-p-1add710		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/sogan-kuru-dokme-kg-p-1b1a7a0		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/lahana-beyaz-kg-p-1ae7350		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/lahana-kirmizi-kg-p-1aec170		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kultur-mantari-400-g-paket-p-1aeea13		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/salata-kivircik-adet-p-1b0bd99		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/maydanoz-adet-p-1af36a9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/nane-adet-p-1af84c9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/patlican-bostan-kg-p-1afd6c8		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-pirasa-paket-kg-p-1b05449		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/roka-demet-p-1b06f29		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/hiyar-kg-p-1ad3ad0		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/heinz-sarimsakli-mayonez-400-g-p-89b2e5		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/turp-kirmizi-kg-p-1b26af9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/patates-kg-p-1afabf4		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/hasata-derinkuyu-kuru-fasulyesi-1-kg-p-f9826		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-nohut-1000-g-p-100579		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-kirmizi-mercimek-1-kg-p-1053a2		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-bezelye-konservesi-830-g-p-89dfee		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/berrak-ankara-cubuk-salatalik-tursusu-350-g-p-f73216		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tat-domates-salcasi-1500-g-p-89e068		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/cem-ayvalik-tas-kirma-zeytin-291-350-adkg-p-f476c2		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/lays-kasar-peyniri-ve-izgara-sogan-tadinda-125-g-p-4d84f5		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-toz-seker-1-kg-p-3281b4		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-kup-seker-1-kg-p-32afa9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/antalya-recelcisi-7-turuncu-meyve-receli-290-g-p-6b9406		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/balparmak-yuksek-yayla-cicek-bali-460-g-p-6be1cb		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/koska-pekmez-cam-kavanoz-800-g-p-6c1be5		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/torku-sade-tahin-helvasi-200-g-p-6c097e		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/fiskobirlik-findik-ezmesi-180-g-p-6d1e6e		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/godiva-masterpieces-bitter-cikolata-tablet-86-g-p-6b8f25		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/ulker-hobby-krem-cikolata-350g-p-6d19ef		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/lokum-atolyesi-dubai-sultan-lokumu-250-g-p-6b48e0		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/nazar-damla-sakizi-aromali-sekersiz-sakiz-3lu-21-g-p-6ca5f9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/olips-orman-meyveleri-aromali-28-g-p-6c81b9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/algida-usta-usulu-cifte-dovulmus-sade-dondurma-500-ml-p-b08bf4		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-karabiber-75-g-p-5bb597		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/billur-tuz-rafine-iyotlu-sofra-tuzu-750-g-p-5bdfee		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/droetker-hamur-kabartma-tozu-10lu-paket-100-g-p-5c7d69		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kuhne-balsamik-sirke-250-ml-p-5c07d0		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tat-ketcap-pickle-390-g-p-f890fb		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/hellmanns-mayonez-385-g-p-89a292		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-tahin-600-g-p-6c08e7		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/knorr-hazir-corba-mercimek-76-g-p-4c99ce		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/droetker-vanilyali-puding-toz-karisimi-120-g-p-6c574f		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kurukahveci-mehmet-efendi-turk-kahvesi-100-g-p-310151		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/nescafe-3u-1-arada-original-175-g-p-312b30		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/caykur-tiryaki-cayi-1-kg-p-2f7993		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/teekanne-papatya-ve-balli-bitki-cayi-20li-30-g-p-2fc2ae		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-kakao-50-g-p-4cef00		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/abant-dogal-kaynak-suyu-5-l-p-7afd20		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/avoya-blend-visne-limon-maden-suyu-4-x-250-ml-p-7ac063		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/camlica-gazoz-15-l-p-7a9c48		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/coca-cola-orijinal-tat-pet-1-l-p-7a3bcc		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/zuber-seftali-aromali-cayli-icecek-250-ml-p-7ad727		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/sutas-200-ml-ayran-p-2bebd3b		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/tamek-100-karisik-meyve-suyu-1-lt-p-7af8f1		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.akademikpersonel.org/alkol-fiyatlari/		1450
+https://www.akademikpersonel.org/alkol-fiyatlari/		575
+https://www.akademikpersonel.org/alkol-fiyatlari/		775
+https://www.akademikpersonel.org/alkol-fiyatlari/		1080
+https://www.akademikpersonel.org/alkol-fiyatlari/		85
+https://www.antalyahurses.com/guncel-zamli-sigara-fiyatlari/530457		105
+https://www.cimri.com/erkek-kaban/en-ucuz-buratti-5840098-taba-erkek-kase-kaban-fiyatlari,685627917		div.rTdMX
+https://www.cimri.com/erkek-mont/en-ucuz-ghassy-co-softshell-haki-dik-yaka-polar-erkek-mont-fiyatlari,2521242680		div.rTdMX
+https://www.cimri.com/erkek-takim-elbise/en-ucuz-ds-damat-4hfy5ort01599-slim-fit-siyah-yelekli-takim-elbise-fiyatlari,2213146299		div.rTdMX
+https://www.cimri.com/erkek-ceket/en-ucuz-jack-jones-12268716-blk-ario-linen-bomber-siyah-yuvarlak-yaka-erkek-ceket-fiyatlari,2517706852		div.rTdMX
+https://www.cimri.com/erkek-pantolon/en-ucuz-dockers-smart-360-comfort-knit-chino-bej-slim-fit-erkek-pantolon-fiyatlari,2067419312		div.rTdMX
+https://www.cimri.com/erkek-kazak-suveter-triko/en-ucuz-modarar-rar00799-kahverengi-erkek-kazak-fiyatlari,2092218711		div.rTdMX
+https://www.cimri.com/erkek-gomlek/en-ucuz-columbia-bahama-ii-erkek-gomlek-fiyatlari,50953267		div.rTdMX
+https://www.cimri.com/erkek-sweatshirt/en-ucuz-new-balance-tst2210-avi-erkek-sweatshirt-fiyatlari,2177658070		div.rTdMX
+https://www.cimri.com/erkek-t-shirt/en-ucuz-kappa-361d3ew809-yesil-erkek-polo-t-shirt-fiyatlari,1126600852		div.rTdMX
+https://www.cimri.com/erkek-esofman/en-ucuz-nike-bv2679-010-erkek-esofman-fiyatlari,513875723		div.rTdMX
+https://www.cimri.com/erkek-pijama/en-ucuz-kocabey-4007-siyah-beyaz-uzun-kol-cizgili-gaffur-erkek-pijama-takim-fiyatlari,2245978402		div.rTdMX
+https://www.cimri.com/erkek-boxer/en-ucuz-tutku-karisik-renk-penye-havlu-bel-8li-erkek-boxer-fiyatlari,868862242		div.rTdMX
+https://www.cimri.com/erkek-corabi/en-ucuz-dundar-41-45-plus-dikissiz-modal-diyabetik-erkek-corap-fiyatlari,617419186		div.rTdMX
+https://www.cimri.com/bayan-kaban/en-ucuz-batik-a6192-siyah-38-kadin-kaban-fiyatlari,2105831584		div.rTdMX
+https://www.cimri.com/bayan-mont/en-ucuz-lufian-122120041-siyah-daisy-kaz-tuyu-kadin-mont-fiyatlari,2521928912		div.rTdMX
+https://www.cimri.com/elbise/en-ucuz-terry-pau-askili-siyah-elbise-fiyatlari,14913164		div.rTdMX
+https://www.cimri.com/bayan-ceket/en-ucuz-only-15295423-siyah-onlnewvida-faux-fur-kadin-gunluk-suni-kurk-ceket-fiyatlari,2315718287		div.rTdMX
+https://www.cimri.com/etek/en-ucuz-adidas-it4687-tennis-pro-pleated-aeroready-beyaz-kadin-tenis-etek-fiyatlari,2471116120		div.rTdMX
+https://www.cimri.com/bayan-pantolon/en-ucuz-mavi-100980-33687-serenay-gold-mavi-kadin-jean-pantolon-fiyatlari,710621007		div.rTdMX
+https://www.cimri.com/bayan-esofman/en-ucuz-trendseninle-sierra-nevada-baskili-siyah-hirka-jogger-oversize-kadin-esofman-takimi-fiyatlari,2392379567		div.rTdMX
+https://www.cimri.com/bayan-kazak-suveter-triko/en-ucuz-desen-triko-02422362-kemik-simli-kadin-kazak-fiyatlari,2406835389		div.rTdMX
+https://www.cimri.com/bayan-gomlek/en-ucuz-koton-oversize-pamuklu-uzun-kollu-cep-detayli-beyaz-kadin-gomlek-fiyatlari,2100855102		div.rTdMX
+https://www.cimri.com/bayan-sweatshirt/en-ucuz-mavi-1610198-80791-bisiklet-yaka-kirmizi-kadin-sweatshirt-fiyatlari,2098492459		div.rTdMX
+https://www.cimri.com/bayan-t-shirt/en-ucuz-adidas-jd1489-ess-wr-tee-pembe-kadin-t-shirt-fiyatlari,2433080495		div.rTdMX
+https://www.cimri.com/tayt/en-ucuz-penti-siyah-termal-kadin-tayt-fiyatlari,698523914		div.rTdMX
+https://www.cimri.com/bayan-esofman/en-ucuz-adidas-jd5434-siyah-essentials-kadin-esofman-takimi-fiyatlari,2525410774		div.rTdMX
+https://www.cimri.com/bayan-pijama/en-ucuz-nisanca-buyuk-beden-polar-pelus-kirmizi-kadin-pijama-takimi-fiyatlari,2077258490		div.rTdMX
+https://www.cimri.com/bayan-kulot/en-ucuz-tutku-siyah-yuksek-bel-bato-6li-paket-ic-giyim-kadin-kulot-fiyatlari,2048340913		div.rTdMX
+https://www.cimri.com/kulotlu-corap/en-ucuz-penti-fit-15-siyah-burunsuz-kulotlu-corap-fiyatlari,810934		div.rTdMX
+https://www.cimri.com/bayan-kaban/en-ucuz-batik-a6192-siyah-38-kadin-kaban-fiyatlari,2105831584		div.rTdMX
+https://www.cimri.com/kiz-cocuk-elbise/en-ucuz-toontoy-fabulous-baskili-ekru-kiz-cocuk-elbise-fiyatlari,378469959		div.rTdMX
+https://www.cimri.com/erkek-cocuk-pantolon/en-ucuz-defacto-w1646a622sp-siyah-jogger-esnek-bantli-paca-gabardin-erkek-cocuk-pantolon-fiyatlari,2146962726		div.rTdMX
+https://www.cimri.com/erkek-cocuk-kazak-suveter-triko/en-ucuz-defacto-ekru-regular-fit-bisiklet-yaka-cizgili-erkek-cocuk-triko-kazak-fiyatlari,2451919411		div.rTdMX
+https://www.cimri.com/erkek-cocuk-sweatshirt/en-ucuz-defacto-b3350a823wn-erkek-cocuk-marvel-comics-regular-fit-bisiklet-yaka-kalin-sweatshirt-fiyatlari,2273271775		div.rTdMX
+https://www.cimri.com/erkek-cocuk-t-shirt/en-ucuz-no-fear-nfr-b500330-siyah-erkek-cocuk-t-shirt-fiyatlari,2414905721		div.rTdMX
+https://www.cimri.com/kiz-cocuk-tayt/en-ucuz-under-armour-1373950-ankle-crop-mavi-kiz-cocuk-tayt-fiyatlari,2247808025		div.rTdMX
+https://www.cimri.com/erkek-cocuk-esofman/en-ucuz-hummel-931613-2001-felisias-siyah-erkek-cocuk-esofman-alti-fiyatlari,2167771978		div.rTdMX
+https://www.cimri.com/kiz-cocuk-pijama/en-ucuz-doremi-gri-melanj-kiz-cocuk-pijama-takimi-fiyatlari,2474831084		div.rTdMX
+https://www.cimri.com/kiz-cocuk-ic-atlet/en-ucuz-tutku-kiz-cocuk-termal-iclik-atlet-tayt-takimi-fiyatlari,359507731		div.rTdMX
+https://www.cimri.com/kiz-cocuk-corap-seti/en-ucuz-royaleks-6-adet-beyaz-turuncu-bordo-cocuk-sneaker-patik-corap-fiyatlari,2064589613		div.rTdMX
+https://www.cimri.com/bebek-tulumu/en-ucuz-benetton-1070ha005-hayvan-desenle-pembe-tulum-fiyatlari,2275507885		div.rTdMX
+https://www.cimri.com/bebek-pijamasi/en-ucuz-sema-baby-6-9-ay-sevimli-kugu-bebek-pijama-takimi-fiyatlari,2231637327		div.rTdMX
+https://www.cimri.com/bebek-kulodu/en-ucuz-canped-60li-emici-ekstra-buyuk-online-paket-kulot-fiyatlari,614934425		div.rTdMX
+https://www.cimri.com/bayan-patik-corap/en-ucuz-royaleks-2-cift-set-8-el-orgusu-kislik-sik-kadin-yun-patik-fiyatlari,2107962487		div.rTdMX
+https://www.cimri.com/kravat/en-ucuz-brianze-dk-29-siyah-kendiliginden-desenli-kravat-fiyatlari,2311146615		div.rTdMX
+https://www.cimri.com/erkek-kemeri/en-ucuz-ziya-143980z205-siyah-hakiki-deri-erkek-kemer-fiyatlari,2412244429		div.rTdMX
+https://www.cimri.com/esarp/en-ucuz-armine-9100-31-turuncu-ipek-esarp-fiyatlari,2336367620		div.rTdMX
+https://drycenter.com/fiyatlar/kuru-temizleme-fiyatlari		195
+https://drycenter.com/fiyatlar/kuru-temizleme-fiyatlari		239
+https://www.cimri.com/spor-ayakkabi/en-ucuz-adidas-galaxy-7-m-halsil-carbon-cblack-erkek-spor-ayakkabisi-fiyatlari,2456253737		div.rTdMX
+https://www.cimri.com/erkek-botlari/en-ucuz-adidas-jq2210-terrex-skychaser-ax5-gtx-siyah-erkek-bot-fiyatlari,2515829404		div.rTdMX
+https://www.cimri.com/spor-ayakkabi/en-ucuz-adidasrunfalcon5kadin-spor-ayakkabi-fiyatlari,a2459445943		div.rTdMX
+https://www.cimri.com/kadin-gunluk-ayakkabilari/en-ucuz-forelli-29413-taba-kadin-gunluk-ayakkabi-fiyatlari,238603242		div.rTdMX
+https://www.cimri.com/kadin-botlari/en-ucuz-caterpillar-colorado-tarcin-kadin-bot-fiyatlari,183282668		div.rTdMX
+https://www.cimri.com/spor-ayakkabi/en-ucuz-skechers-12980tk-wsl-summits-kadin-beyaz-spor-ayakkabi-fiyatlari,2077382217		div.rTdMX
+https://www.cimri.com/kadin-terlikleri-ve-sandaletleri/en-ucuz-ceyo-3400-2-lacivert-kadin-terlik-fiyatlari,4582468		div.rTdMX
+https://www.cimri.com/trekking-ayakkabisi-botu/en-ucuz-lumberjack-under-3pr-siyah-erkek-cocuk-outdoor-bot-fiyatlari,2292509871		div.rTdMX
+https://www.cimri.com/spor-ayakkabi/en-ucuz-slazenger-aldona-siyah-erkek-cocuk-sneaker-ayakkabi-fiyatlari,956151002		div.rTdMX
+https://drycenter.com/fiyatlar/kuru-temizleme-fiyatlari		200
+https://drycenter.com/fiyatlar/kuru-temizleme-fiyatlari		250
+https://www.emlakjet.com/ilan/besiktas-abbasaga-parkinda-80m2-21-deniz-manzarali-daire-ceyhun-emlak-18274020		<span class="styles_price__6wmxk">30.000<!-- --> <!-- -->TL</span>
+https://www.cimri.com/boyalar/en-ucuz-fawori-extra-10-kg-tavan-boyasi-fiyatlari,30913362		div.rTdMX
+https://www.cimri.com/parke/en-ucuz-iahsap-kayin-kontraplak-panel-plaka-tabaka-fiyatlari,2179968157		div.rTdMX
+https://www.cimri.com/emniyet-kilidi/en-ucuz-anahtarli-halatli-pvc-kapi-pencere-emniyet-kilidi-fiyatlari,73119283		div.rTdMX
+https://www.cimri.com/tornavida/en-ucuz-izeltas-4300008107-rod-seri-tornavidalar-fiyatlari,114754919		div.rTdMX
+https://iski.istanbul/abone-hizmetleri/abone-rehberi/su-birim-fiyatlari/		<td colspan="1" rowspan="1"><p>52,00</p></td>
+https://solaravm.com/1-kw-kac-tl		<td style="text-align:center">2,59 TL</td>
+https://www.bahcesehirgaz.com.tr/dogal-gaz-birim-fiyat-tarifesi/		<td width="104">1,58707641</td>
+https://www.bahcesehirgaz.com.tr/dogal-gaz-birim-fiyat-tarifesi/		<td width="104">0,90773327</td>
+https://www.cimri.com/kamp-aksesuari/en-ucuz-orcamp-kts-450-orgaz-450-gr-vidali-gaz-kartus-2li-set-tup-fiyatlari,2189765968		div.rTdMX
+https://www.cimri.com/mangal-barbeku-malzemeleri/en-ucuz-kostakli-10-kg-kisa-kesilmis-briket-mangal-komuru-fiyatlari,681649588		div.rTdMX
+https://www.cimri.com/parke/en-ucuz-iahsap-kavak-kereste-cita-taslak-tahta-ve-ahsap-blok-fiyatlari,2179968447		div.rTdMX
+https://www.cimri.com/kamp-piknik-masasi/en-ucuz-orcamp-out-2050-katlanabilir-aluminyum-kamp-masasi-fiyatlari,927331956		div.rTdMX
+https://www.cimri.com/kamp-sandalyesi/en-ucuz-bofigo-katlanir-lacivert-kamp-sandalyesi-fiyatlari,791161856		div.rTdMX
+https://www.cimri.com/yatak-odasi-takimi-seti/en-ucuz-vivense-tx3-248-eti-5-kapakli-yatak-odasi-takimi-fiyatlari,2179742172		div.rTdMX
+https://www.cimri.com/yatak/en-ucuz-niron-yatak-soft-pocket-tek-kisilik-luks-full-ortopedik-paket-yayli-yumusak-yatak-fiyatlari,2134510057		div.rTdMX
+https://www.cimri.com/yatak/en-ucuz-yatas-spinal-support-bamboo-roll-pack-160x200-cm-cift-kisilik-yatak-fiyatlari,2304615279		div.rTdMX
+https://www.cimri.com/yatak/en-ucuz-niron-silver-160x200-cift-kisilik-full-ortopedik-yatak-gri-keten-baza-baslik-fiyatlari,540442006		div.rTdMX
+https://www.cimri.com/genc-odasi-takimi-seti/en-ucuz-garaj-home-beyaz-yaren-4-kapakli-genc-odasi-takimi-fiyatlari,2477423938		div.rTdMX
+https://www.cimri.com/oturma-odasi-salon-takimi-seti/en-ucuz-cantek-dizayn-nora-tv-sehpasi-alt-modul-ve-konsol-2li-antrasit-gumus-salon-takimi-fiyatlari,2513391928		div.rTdMX
+https://www.cimri.com/avize/en-ucuz-apliqa-berca-krom-avize-modern-mutfak-yemek-masasi-ustu-yatak-odasi-salon-4lu-avize-fiyatlari,2445994355		div.rTdMX
+https://www.cimri.com/zigon-sehpa/en-ucuz-bofigo-3lu-cam-orta-yan-metal-zigon-sehpa-fiyatlari,2102913807		div.rTdMX
+https://www.cimri.com/salon-halisi/en-ucuz-tappeto-rex-dekoratif-krem-post-hali-fiyatlari,678012013		div.rTdMX
+https://www.cimri.com/fon-perde/en-ucuz-tac-saten-guneslik-duz-dikis-kirik-beyaz-200x250-cm-fon-perde-fiyatlari,142889218		div.rTdMX
+https://www.cimri.com/stor-perde/en-ucuz-storburada-stb-400v12-d-ekru-100-x-200-krem-zebra-stor-perde-fiyatlari,2077385279		div.rTdMX
+https://www.cimri.com/tul-perde/en-ucuz-tac-begonya-1-2-5-orta-pile-boy-250-cm-400x250-cm-tul-perde-fiyatlari,78984488		div.rTdMX
+https://www.cimri.com/yatak-ortusu/en-ucuz-ceyiz-diyari-pudra-gelincik-kapitoneli-fransiz-gupurlu-yatak-ortusu-fiyatlari,648991387		div.rTdMX
+https://www.cimri.com/yorgan/en-ucuz-yatas-superwashed-yun-cift-kisilik-yorgan-fiyatlari,419498950		div.rTdMX
+https://www.cimri.com/battaniye/en-ucuz-karaca-home-faye-kahverengi-cift-kisilik-battaniye-fiyatlari,2094411940		div.rTdMX
+https://www.cimri.com/pike-pike-takimi/en-ucuz-karaca-home-levi-sutlu-kahve-cift-kisilik-pike-fiyatlari,567672072		div.rTdMX
+https://www.cimri.com/nevresim-takimi/en-ucuz-karaca-home-silvie-100-pamuk-firfirli-kirmizi-cift-kisilik-nevresim-takim-8680214290477-fiyatlari,1845623398		div.rTdMX
+https://www.cimri.com/yastik/en-ucuz-visco-ortopedik-yastik-fiyatlari,11154526		div.rTdMX
+https://www.cimri.com/banyo-havlusu/en-ucuz-ozdilek-dory-best-set-krem-pudra-banyo-havlu-takimi-fiyatlari,1794853616		div.rTdMX
+https://www.cimri.com/buzdolaplari/en-ucuz-arcelik-570477-mb-buzdolabi-fiyatlari,2411905377		div.rTdMX
+https://www.cimri.com/derin-dondurucular/en-ucuz-bosch-gsv24vwe0n-beyaz-dikey-derin-dondurucu-fiyatlari,2334883913		div.rTdMX
+https://www.cimri.com/camasir-makineleri/en-ucuz-samsung-ww90cgc04daeah-camasir-makinesi-fiyatlari,2289686219		div.rTdMX
+https://www.cimri.com/bulasik-makineleri/en-ucuz-arcelik-6444-bulasik-makinesi-fiyatlari,2337268558		div.rTdMX
+https://www.cimri.com/mikrodalga-firinlar/en-ucuz-samsung-ms23dg4504attr-23-lt-mikrodalga-firin-fiyatlari,2377148497		div.rTdMX
+https://www.cimri.com/ankastre-ocaklar/en-ucuz-kumtel-ko-40-tshdf-siyah-ocak-fiyatlari,48361431		div.rTdMX
+https://www.cimri.com/ankastre-firinlar/en-ucuz-bosch-hbf534ew3t-beyaz-ankastre-firin-fiyatlari,2229386054		div.rTdMX
+https://www.cimri.com/klimalar/en-ucuz-baymak-elegant-soft-duvar-tipi-klima-fiyatlari,a2453490845		div.rTdMX
+https://www.cimri.com/sobalar/en-ucuz-sobapark-kovali-uyuyan-odun-komur-kuzine-soba-fiyatlari,104244336		div.rTdMX
+https://www.cimri.com/kombiler/en-ucuz-baymak-duotec-compact-24-kw-premix-yogusmali-kombi-fiyatlari,366639788		div.rTdMX
+https://www.cimri.com/davlumbazlar/en-ucuz-kumtel-da6-835-siyah-davlumbaz-fiyatlari,63994652		div.rTdMX
+https://www.cimri.com/elektrikli-supurgeler/en-ucuz-philips-xb912507-marathon-ultimate-siyah-elektrikli-supurge-fiyatlari,376670910		div.rTdMX
+https://www.cimri.com/blenderler/en-ucuz-arcelik-rhb-3410-1500-w-blender-seti-fiyatlari,2446131100		div.rTdMX
+https://www.cimri.com/tost-makineleri/en-ucuz-kiwi-ksm-2444-izgara-ve-tost-makinesi-fiyatlari,2401301062		div.rTdMX
+https://www.cimri.com/kahve-makineleri/en-ucuz-philips-ep334790-lattego-3300-serisi-tam-otomatik-espresso-kahve-makinesi-fiyatlari,2308329108		div.rTdMX
+https://www.cimri.com/utuler/en-ucuz-philips-dst751180-azur-7500-serisi-buharli-utu-fiyatlari,2162638673		div.rTdMX
+https://www.cimri.com/lastik-tamir-spreyi/en-ucuz-autokit-450-ml-lastik-tamir-kiti-fiyatlari,490286025		div.rTdMX
+https://www.cimri.com/su-bardagi/en-ucuz-the-mia-striped-borosilikat-400-ml-cam-bardak-fiyatlari,2458625564		div.rTdMX
+https://www.cimri.com/yemek-takimi/en-ucuz-tabak-evi-porselen-24-parca-6-kisilik-sofia-platin-yemek-takimi-fiyatlari,2455282624		div.rTdMX
+https://www.cimri.com/catal-kasik-bicak-takimlari/en-ucuz-nehir-buket-sade-60-parca-catal-kasik-bicak-takimi-fiyatlari,574511816		div.rTdMX
+https://www.cimri.com/tencere-tava-setleri/en-ucuz-schafer-vals-8-parca-celik-tencere-seti-fiyatlari,1544988		div.rTdMX
+https://www.cimri.com/tencereler/en-ucuz-mehtap-onyx-kacerola-18-cm-cift-tarafli-teflon-sosluk-fiyatlari,478005356		div.rTdMX
+https://www.cimri.com/bicaklar-ve-bicak-setleri/en-ucuz-victorinox-5-5203-16-kasap-bicagi-fiyatlari,772727		div.rTdMX
+https://www.cimri.com/normal-sarj-edilebilir-piller/en-ucuz-duracell-cr123a-pil-fiyatlari,1517756		div.rTdMX
+https://www.cimri.com/led-aydinlatmalar/en-ucuz-cata-ct-4229-beyaz-sarjli-led-ampul-fiyatlari,45241791		div.rTdMX
+https://www.cimri.com/asma-kilit/en-ucuz-katar-180-cm-pvc-ispanyolet-kapi-kilidi-fiyatlari,2081655333		div.rTdMX
+https://www.cimri.com/sobalar/en-ucuz-soba-borusu-dirsegi-fiyatlari,2092398076		div.rTdMX
+https://www.migros.com.tr/yumos-extra-konsantre-camasir-yumusatici-lilyum-1008-ml-42-yikama-p-1d27678		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/fairylimon-15-l-p-1d3389c		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/asperox-sari-guc-sprey-650-ml-p-1ddc1df		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/a-plex-farasli-mini-firca-seti-p-1dde7dd		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-temizlik-bezi-5li-p-1db84e2		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/pasabahce-lockie-lock-saklama-kabi-355-cc-p-1f7df71		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/migros-icten-cekmeli-jumbo-havlu-110-rulo-p-1d953f3		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://armut.com/fiyatlari/istanbul-ev-temizligi_191_34		<td _ngcontent-ng-c3772982277="" class="segment-table__price">558 TL</td>
+https://armut.com/fiyatlari/istanbul-hali-yikama-temizleme_87_34		<td _ngcontent-ng-c3772982277="" class="segment-table__price">500 TL</td>
+https://selcukecza.com.tr/sayfa/ilac-fiyat-ve-barkod-arama/ilac-ve-barkod-arama?barcode=8699717010109&firma=0&ilacname=&kdv=0&gun=01&ay=01&yil=2023		57
+https://www.migros.com.tr/migros-esnek-yara-bandi-10lu-p-20f30f1		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.cimri.com/gozluk-cercevesi/en-ucuz-fiauli-siyah-gumus-unisex-gozluk-cercevesi-fiyatlari,2472960622		div.rTdMX
+https://www.cimri.com/goz-kremi/en-ucuz-blefaritto-2x360-ml-lens-solusyonu-fiyatlari,2385039731		div.rTdMX
+https://www.cimri.com/tansiyon-aleti/en-ucuz-omron-m2-basic-hem-7121-j-e-intellisense-koldan-tansiyon-olcer-fiyatlari,468412801		div.rTdMX
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		800
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		1000
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		750
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		2500
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		750
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		1000
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		1000
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		750
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		2000
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		1500
+https://www.magdeburger.com.tr/blog/ozel-hastane-muayene-tahlil-ameliyat-ucretleri-ne-kadar#:~:text=Genel%20olarak%20doktor%20unvanlar%C4%B1na%20g%C3%B6re,muayene%20%C3%BCcretleri%3A%201000%20%E2%80%93%203000%20TL		7000
+https://www.sifiraracal.com/fiat-modelleri/egea		2240000
+https://www.sifiraracal.com/renault-modelleri/clio		2722000
+https://www.sifiraracal.com/togg-modelleri/t10x		1399000
+https://www.sifiraracal.com/yamaha/r7-fiyati		<span><!--t=de-->215.000 TL <!----></span>
+https://www.cimri.com/elektrikli-bisikletler/en-ucuz-skyjet-nitro-16-siyah-elektrikli-bisiklet-fiyatlari,2414477974		div.rTdMX
+https://www.cimri.com/rc-arac-aksesuarlari/en-ucuz-lightex-lt-418-4v-1-8ah-bakimsiz-isildak-akusu-fiyatlari,18313898		div.rTdMX
+https://www.cimri.com/antifiriz/en-ucuz-osser-mavi-3-lt-antifiriz-fiyatlari,816541973		div.rTdMX
+https://www.petrolofisi.com.tr/akaryakit-fiyatlari		54.99
+https://www.petrolofisi.com.tr/akaryakit-fiyatlari		27.71
+https://www.petrolofisi.com.tr/akaryakit-fiyatlari		57.07
+https://www.cimri.com/motor-yagi/en-ucuz-castrol-magnatec-stop-start-5w-30-a5-4-lt-motor-yagi-fiyatlari,13727334		div.rTdMX
+https://armut.com/fiyatlari/istanbul-oto-tamir_733_34		<span _ngcontent-ng-c2533696535="" class="example__winner">1.000 TL</span>
+https://armut.com/fiyatlari/istanbul-oto-tamir_733_34		<span _ngcontent-ng-c2533696535="" class="example__winner">1.000 TL</span>
+https://armut.com/fiyatlari/soforlu-arac-kiralama_40350		<td _ngcontent-ng-c3772982277="" class="segment-table__price">1.250 TL</td>
+https://www.eleman.net/is-rehberi/guncel/ispark-2025-park-ucretleri-h5019		<td style="width:104px"><p>150₺</p></td>
+https://www.hedeffilo.com/blog/otoyol-ve-kopru-gecis-ucretleri		<td>175,00</td>
+https://www.hedeffilo.com/blog/otoyol-ve-kopru-gecis-ucretleri		<td>47,00</td>
+https://kadimhukuk.com.tr/makale/ehliyet-fiyatlari/		<strong>11.235,60 TL</strong>
+https://www.enuygun.com/bilgi/buyuksehirlerde-toplu-tasima-ucretleri/		<td>59,76</td>
+https://www.enuygun.com/bilgi/buyuksehirlerde-toplu-tasima-ucretleri/		<td>35,00</td>
+https://www.enuygun.com/bilgi/buyuksehirlerde-toplu-tasima-ucretleri/		<td>35,00</td>
+https://www.google.com/search?q=istanbuyl+ankara+tren+%C3%BCcreti&rlz=1C1GCOV_enTR1159TR1159&oq=istanbuyl+ankara+tren+%C3%BCcreti&gs_lcrp=EgZjaHJvbWUyBggAEEUYOTIJCAEQABgNGIAEMggIAhAAGBYYHjIICAMQABgWGB4yCAgEEAAYFhgeMggIBRAAGBYYHjIICAYQABgWGB4yCAgHEAAYFhgeMggICBAAGBYYHjIICAkQABgWGB7SAQgzNzc1ajBqNKgCALACAQ&sourceid=chrome&ie=UTF-8		<div class="a413Gc" jsname="rDXRdb">₺780</div>
+https://www.enuygun.com/bilgi/buyuksehirlerde-toplu-tasima-ucretleri/		<td>35,00</td>
+https://www.enuygun.com/bilgi/buyuksehirlerde-toplu-tasima-ucretleri/		<td>35,00</td>
+https://www.eleman.net/is-rehberi/guncel/okul-servis-ucreti-ne-kadar-h3939		<strong>2.420 TL</strong>
+https://www.eleman.net/is-rehberi/guncel/istanbul-toplu-ulasim-ve-taksi-ucretleri-tarifesi-h3216		<td style="height:15px;width:82px"><p>&nbsp;54,5&nbsp;TL</p></td>
+https://www.enuygun.com/otobus-bileti/istanbul-ankara/		<span><span class="money-int">379</span> <span class="money-currency">TL</span></span>
+https://www.enuygun.com/ucak-bileti/istanbul-ankara-ista-anka/		<span class="money-int">838</span>
+https://www.enuygun.com/bilgi/buyuksehirlerde-toplu-tasima-ucretleri/		<td>35,00</td>
+https://www.vepara.com.tr/e-ticaret-kargo-ucretleri/		<td>₺123,49</td>
+https://www.vepara.com.tr/e-ticaret-kargo-ucretleri/		<td>₺176,42</td>
+https://www.vepara.com.tr/e-ticaret-kargo-ucretleri/		<td>₺302,82</td>
+https://www.cimri.com/cep-telefonlari/en-ucuz-samsung-galaxy-a56-fiyatlari,2372353276		div.rTdMX
+https://www.cimri.com/cep-telefonu-bataryasi/en-ucuz-xiaomi-redmi-note-8-pro-bm4j-cep-telefonu-bataryasi-fiyatlari,675261606		div.rTdMX
+https://www.cimri.com/cep-telefonu-bataryasi/en-ucuz-lg-g5-bl-42d1f-cep-telefonu-bataryasi-fiyatlari,32677020		div.rTdMX
+https://www.turkcell.com.tr/paket-ve-tarifeler/konusma/ses-ve-sms-birim-ucretleri		<span class="packages-detail_packagedetail__oneCard--price-passive__CKReH">4,11<span class="text-captions-bold packages-detail_packagedetail__oneCard--priceUnit__91YYw">TL</span></span>
+https://www.turkcell.com.tr/paket-ve-tarifeler/konusma/ses-ve-sms-birim-ucretleri		<span class="packages-detail_packagedetail__oneCard--price-passive__CKReH">4,11<span class="text-captions-bold packages-detail_packagedetail__oneCard--priceUnit__91YYw">TL</span></span>
+https://www.turkcell.com.tr/trc/turkcellli-olmak/paket-secimi		<div class="atom-price_a-price__7lMAa"><span>260</span><span class="atom-price_a-price__currency__E49cr">TL/AY</span></div>
+https://www.superonline.net/ev-interneti/fiber-internet?from=turkcell		<span class="campaign-card_cardFront__prices__price__value__l0bPZ">650<!-- --> </span>
+https://www.cimri.com/televizyonlar/en-ucuz-samsung-u8000f-televizyon-fiyatlari,a2489892376		div.rTdMX
+https://www.cimri.com/dizustu-bilgisayar/en-ucuz-lenovo-v15-g4-iru-83a100a5tr-i5-13420h-16gb-ram-512gb-ssd-freedos-15-6-inc-laptop-notebook-fiyatlari,2358164736		div.rTdMX
+https://www.cimri.com/klavye-mouse/en-ucuz-logitech-m650-buyuk-boy-kablosuz-mouse-fiyatlari,1329663265		div.rTdMX
+https://www.cimri.com/tablet-pc/en-ucuz-samsung-galaxy-tab-a9-plus-sm-x210-8gb-ram-128gb-11-inc-tablet-pc-fiyatlari,a2314742102		div.rTdMX
+https://www.cimri.com/projeksiyon/en-ucuz-havit-pj207-prime-opal-hd-projeksiyon-cihazi-fiyatlari,2066866427		div.rTdMX
+https://www.cimri.com/tripodlar/en-ucuz-coverzone-youtuber-led-isikli-halka-13-inch-selfie-yayinci-makyaj-isigi-210-cm-tripod-fiyatlari,753715589		div.rTdMX
+https://www.cimri.com/klasik-gitarlar/en-ucuz-barcelona-lc-3600-or-34-junior-boy-klasik-gitar-fiyatlari,14570871		div.rTdMX
+https://www.cimri.com/oyuncak-arabalar/en-ucuz-bruder-02491-john-deere-gator-855d-fiyatlari,12879419		div.rTdMX
+https://www.cimri.com/scooter/en-ucuz-globber-elite-deluxe-full-isikli-yesil-scooter-fiyatlari,915488480		div.rTdMX
+https://www.cimri.com/fitness-kondisyon-aksesuarlari/en-ucuz-boodun-profesyonel-fitness-agirlik-eldiveni-fiyatlari,973789479		div.rTdMX
+https://www.cimri.com/kuru-kedi-mamasi/en-ucuz-enjoy-tavuklu-15-kg-yetiskin-kedi-mamasi-fiyatlari,11146838		div.rTdMX
+https://leylekvet.com/veteriner-ucretleri-muayene-fiyatlari		<strong>1.250 TL</strong>
+https://biletalsat.com/		835
+https://www.macfit.com/fiyat-listesi		<span class="price">1364TL</span>
+https://dugun.com/dugun-salonlari/istanbul/yuvam-dugun-davet-salonu		75000
+https://armut.com/fiyatlari/istanbul-biyometrik-fotograf-cekimi_75194_34		<td _ngcontent-ng-c3772982277="" class="segment-table__price">250 TL</td>
+https://www.digiturkbasvurusu.com/kampanya/taraftar-paketi/index.html?gad_source=1&gad_campaignid=13922630396&gbraid=0AAAAABPx1eSOaQSZn6L8zoMpvPgXvEykH&gclid=CjwKCAiAuIDJBhBoEiwAxhgyFp0KJdylrjnyJCk8V2fU2uSL5q8vuzxBSAUDLWHxy9vJkd8wXnbODBoCjdsQAvD_BwE		<td>569₺</td>
+https://www.viaportmarina.com/pages/sinema/ucretler		<strong> 299.00 TL</strong>
+https://www.viaportmarina.com/pages/sinema/ucretler		<strong> 299.00 TL</strong>
+https://www.odatv.com/spor/iddiada-kupon-ucretleri-degisti-120090819		50
+https://www.cimri.com/boyama-kitaplari/en-ucuz-lino-aqua-magic-book-mevsimler-sihirli-boyama-kitabi-fiyatlari,1774842423		div.rTdMX
+https://www.cimri.com/tum-dersler/en-ucuz-basariya-goturen-aile-sinav-doneminde-ana-babalik-dogan-cuceloglu-9789751411075-fiyatlari,451093		div.rTdMX
+https://www.cimri.com/dunya-klasikleri/en-ucuz-ilahi-komedya-3-kitap-takim-ve-kutulu-dante-alighieri-9789753296816-fiyatlari,64765450		div.rTdMX
+https://www.migros.com.tr/posta-gazetesi-hafta-ici-p-243ae84		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kafa-dergisi-p-23c3f8d		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/kulinart-25x35-cm-20-yaprak-pp-kapak-resim-defteri-p-234d545		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/rotring-visuclick-versatil-07-uclu-kalem-2b-uc-hediye-canli-renkli-kalem-p-23519c9		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/pritt-12li-kuru-boya-kalemi-p-2355fcf		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/frocx-disney-frozen-magic-sulu-boyama-seti-p-2369278		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.migros.com.tr/frocx-disney-roket-silgi-p-235cc13		<span _ngcontent-ng-c3842550839=""> 80,95 <span _ngcontent-ng-c3842550839="" class="currency">TL</span></span>
+https://www.ssc.com.tr/kultur-turlari?gad_source=1&gad_campaignid=1683652491&gbraid=0AAAAAC7N2lF3RqjXIuZ0pVvaMpBEfoUDn&gclid=CjwKCAiAuIDJBhBoEiwAxhgyFhZ9m2Ci9MzvCyzXq0bvpU_vyPP3v-OizhhoREIEduc6xKi9jCrvihoCuhcQAvD_BwE		11490
+https://www.ssc.com.tr/kultur-turlari?gad_source=1&gad_campaignid=1683652491&gbraid=0AAAAAC7N2lF3RqjXIuZ0pVvaMpBEfoUDn&gclid=CjwKCAiAuIDJBhBoEiwAxhgyFhZ9m2Ci9MzvCyzXq0bvpU_vyPP3v-OizhhoREIEduc6xKi9jCrvihoCuhcQAvD_BwE		17490
+https://www.etstur.com/Yurtdisi-Tatil-Turlari/Yilbasi-Turlari		<i class="integers ">36.859</i>
+https://www.markatur.com.tr/hac-fiyatlari-ozel-hac-fiyatlari-2019-hac-fiyatlari		<strong>271.459₺</strong>
+http://markatur.com.tr/kategori/umre-fiyatlari		<span style="color:#FF0000;">(44.709&nbsp;TL)</span>
+https://www.dogankoleji.com/2025/02/04/2025-2026-ogretim-yili-ogrenci-ucretleri/		<p>264.000,-TL</p>
+https://www.dogankoleji.com/2025/02/04/2025-2026-ogretim-yili-ogrenci-ucretleri/		<p>356.000,-TL</p>
+https://yeditepe.edu.tr/tr/aday-ogrenci/ucretler		<td headers="view-field-taksitli-fiyat-table-column" class="views-field views-field-field-taksitli-fiyat py-3 fs-9">660.000TL          </td>
+https://www.eleman.net/is-rehberi/maaslar-ve-ucretler/universite-harclari-ogrenci-katki-paylari-ne-kadar-h13119		<p>₺96.196,00</p>
+https://www.dogankoleji.com/2025/02/04/2025-2026-ogretim-yili-ogrenci-ucretleri/		<p>204.000,-TL</p>
+https://getir.com/yemek/restoran/balkan-lokantasi-ugur-mumcu-mah-sultangazi-istanbul/		140
+https://getir.com/yemek/restoran/balkan-lokantasi-ugur-mumcu-mah-sultangazi-istanbul/		270
+https://getir.com/yemek/restoran/balkan-lokantasi-ugur-mumcu-mah-sultangazi-istanbul/		490
+https://getir.com/yemek/restoran/balkan-lokantasi-ugur-mumcu-mah-sultangazi-istanbul/		370
+https://getir.com/yemek/restoran/oses-cig-kofte-kayisdagi-mah-atasehir-istanbul/		140
+https://getir.com/yemek/restoran/pasa-doner-ciftlik-mah-beykoz-istanbul/		140
+https://getir.com/yemek/restoran/burger-king-merkez-mah-kagithane-istanbul/		295
+https://getir.com/yemek/restoran/domino-s-pizza-merkez-carsi-mah-merkez-elazig/?gad_source=1&gad_campaignid=22356128603&gbraid=0AAAAADhUyRux3vnpCubU1uQGUZujwN4Hp&gclid=CjwKCAiAlfvIBhA6EiwAcErpyYkZaR8wus-m5A6HK-FUVpTckwm5VrzyYQ6b52cUYhsiXE6RbV9F7hoCUskQAvD_BwE		380
+https://getir.com/yemek/restoran/yoncam-pastanesi-ortahisar-carsi-mah-ortahisar-trabzon-2/?gad_source=1&gad_campaignid=22356128603&gbraid=0AAAAADhUyRux3vnpCubU1uQGUZujwN4Hp&gclid=CjwKCAiAlfvIBhA6EiwAcErpyZ9soDf221ONwZ-JFmjo7DwF6WpA0sJnJ_dDhY_1TIxnyFH4BKQzZhoCRA8QAvD_BwE		140
+https://getir.com/yemek/restoran/yoncam-pastanesi-ortahisar-carsi-mah-ortahisar-trabzon-2/?gad_source=1&gad_campaignid=22356128603&gbraid=0AAAAADhUyRux3vnpCubU1uQGUZujwN4Hp&gclid=CjwKCAiAlfvIBhA6EiwAcErpyZ9soDf221ONwZ-JFmjo7DwF6WpA0sJnJ_dDhY_1TIxnyFH4BKQzZhoCRA8QAvD_BwE		400
+https://getir.com/yemek/restoran/starbucks-millet-cad-pendik-istanbul/		215
+https://getir.com/yemek/restoran/balkan-lokantasi-ugur-mumcu-mah-sultangazi-istanbul/		170
+https://getir.com/yemek/restoran/balkan-lokantasi-ugur-mumcu-mah-sultangazi-istanbul/		65
+https://kiki.com.tr/icecek-menu/		<div class="num"><span> 555 TL</span></div>
+https://www.tatilbudur.com/yurtici-oteller/istanbul-otelleri?tb_source=1013&gad_source=1&gad_campaignid=20445445860&gbraid=0AAAAADsCO0K1rRDVjYCWM3Gd_iB2__gIc&gclid=CjwKCAiAuIDJBhBoEiwAxhgyFr9Dx17e_DDmHYC9ZkgWIlQgMJGznhrw99Jr8zA0TgVQRoqadPGV9BoCNxQQAvD_BwE		<div class="c-card__current-price" onclick="window.open('https://www.tatilbudur.com/hilton-istanbul-kozyatagi')">6.500 ₺</div>
+https://yurtburs.itu.edu.tr/yurt/yurt-ucretleri		<td valign="top" style="width: 164px; text-align: center;"> <p style="text-align: center;">3.380,00 ₺</p> </td>
+https://armut.com/fiyatlari/erkek-kuaforu_55793		<td _ngcontent-ng-c3772982277="" class="segment-table__price">350 TL</td>
+https://armut.com/fiyatlari/istanbul-kuafor_118_34		<td _ngcontent-ng-c3772982277="" class="segment-table__price">800 TL</td>
+https://armut.com/fiyatlari/kas-alma_55378		<span _ngcontent-ng-c2533696535="" class="example__winner">300 TL</span>
+https://www.cimri.com/sac-sekillendiriciler/en-ucuz-arzum-ar5063-volume-pro-hava-uflemeli-siyah-renk-sac-duzlestiricisi-fiyatlari,532109632		div.rTdMX
+https://www.cimri.com/tiras-bicagi-ve-yedekleri/en-ucuz-derby-100lu-usta-yaprak-jilet-tam-bicak-fiyatlari,547112596		div.rTdMX
+https://www.cimri.com/dis-fircalari/en-ucuz-oral-b-vitality-pro-sarjli-dis-fircasi-fiyatlari,2063462605		div.rTdMX
+https://www.cimri.com/sabunlar/en-ucuz-dove-beauty-cream-4x90-gr-bar-sabun-fiyatlari,1991237738		div.rTdMX
+https://www.cimri.com/sabunlar/en-ucuz-eyup-sabri-tuncer-okyanus-15-lt-sivi-sabun-fiyatlari,307496463		div.rTdMX
+https://www.cimri.com/erkek-parfumleri/en-ucuz-emporio-armani-stronger-with-you-intensely-edp-100-ml-erkek-parfum-fiyatlari,151899670		div.rTdMX
+https://www.cimri.com/sprey-deodorantlar/en-ucuz-axe-apollo-200-ml-48-saat-etkileyici-erkek-sprey-deodorant-fiyatlari,2420346040		div.rTdMX
+https://www.cimri.com/kolonya-gulsuyu/en-ucuz-eyup-sabri-tuncer-1-lt-limon-kolanyasi-fiyatlari,84512025		div.rTdMX
+https://www.cimri.com/vucut-losyonu-ve-nemlendiricileri/en-ucuz-la-roche-posay-lipikar-baume-ap-m-400-ml-yatistirici-balm-fiyatlari,478698501		div.rTdMX
+https://www.cimri.com/rujlar-dudak-parlaticilari/en-ucuz-maybelline-color-sensational-630-velvet-beige-ruj-fiyatlari,328911		div.rTdMX
+https://www.cimri.com/sampuan-ve-sac-kremi/en-ucuz-vichy-dercos-anti-dandruff-390-ml-yagli-saclar-icin-sampuan-fiyatlari,46981523		div.rTdMX
+https://www.cimri.com/market/tuvalet-kagidi/en-ucuz-familia-plus-40-li-natural-tuvalet-kagidi-fiyatlari,1152418		div.rTdMX
+https://www.cimri.com/bebek-mendil-islak-mendil/en-ucuz-molfix-yenidogan-3x50-150-yaprak-islak-mendil-fiyatlari,1752872264		div.rTdMX
+https://www.cimri.com/bebek-bezi/en-ucuz-prima-pants-no5-junior-kulot-bebek-bezi-fiyatlari,a927227985		div.rTdMX
+https://www.cimri.com/hijyenik-pedler-ve-tamponlar/en-ucuz-molped-pure-soft-mega-firsat-gece-ultra-30lu-ped-fiyatlari,1434584753		div.rTdMX
+https://www.cimri.com/altin-kolye/en-ucuz-harem-altin-gms926-kadin-altin-kolye-fiyatlari,420606620		div.rTdMX
+https://www.cimri.com/kol-saatleri/en-ucuz-casio-mtp-1374d-1avdf-erkek-kol-saati-fiyatlari,746882		div.rTdMX
+https://www.cimri.com/bavul-valiz/en-ucuz-louisiana-polo-1081-bej-4-teker-kumas-buyuk-boy-valiz-fiyatlari,2294035409		div.rTdMX
+https://www.cimri.com/bayan-gunluk-canta/en-ucuz-armine-206-siyah-kadin-canta-fiyatlari,890791052		div.rTdMX
+https://www.cimri.com/okul-cantasi/en-ucuz-relaxion-2225-okul-sirt-cantasi-fiyatlari,a2493276887		div.rTdMX
+https://www.cimri.com/bebek-arabasi-ve-pusetler/en-ucuz-maxi-cosi-lara2-ultra-kompakt-otomatik-katlanan-essential-graphite-kabin-boy-seyahat-sistem-olabilen-bebek-arabasi-fiyatlari,2230435922		div.rTdMX
+https://www.cimri.com/unisex-gunes-gozlukleri/en-ucuz-ray-ban-rb4340-601-50-unisex-gunes-gozlugu-fiyatlari,50633380		div.rTdMX
+https://www.eleman.net/is-rehberi/pratik-bilgiler/ibb-kres-fiyatlari-2025-h6228		5000
+https://www.sigortam.net/dask-sigortasi		<td data-label="DASK Fiyatları" class="text-align-center">1.695 TL</td>
+https://www.sigortam.net/tamamlayici-saglik-sigortasi		<td data-label="Ayakta+Yatarak Teminatlı TSS Fiyatı (Kadın)" class="currency-row">20.687 TL</td>
+https://www.sigortam.net/trafik-sigortasi-tavan-fiyatlari		<td style="text-align: center; padding: 8px; border: 1px solid #ccc;">44.733 TL</td>
+https://www.ziraatbank-kktc.com/tr/bankacilik-hizmetleri-ile-ucret-ve-komisyonlari		<td>40 TL</td>
+https://kadimhukuk.com.tr/makale/noter-ucretleri/		834
+https://kadimhukuk.com.tr/makale/noter-ucretleri/		1489
+https://kadimhukuk.com.tr/makale/noter-ucretleri/		2500
+https://kadimhukuk.com.tr/makale/noter-ucretleri/		2000
